@@ -15,7 +15,7 @@
             <th>Code</th>
         </tr>
         <!-- Model에 담긴 testList 데이터를 JSTL forEach 태그를 통해 반복 출력 -->
-        <c:forEach var="item" items="${testPage}">
+        <c:forEach var="item" items="${testList}">
             <tr>
                 <td>${item.idx}</td>
                 <td>${item.name}</td>
