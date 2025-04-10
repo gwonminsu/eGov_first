@@ -1,2 +1,2 @@
-# eGov_first
-1차 과제 프로젝트
+# eGov_practice
+전자정부 프레임워크 연습용 프로젝트

@@ -1,0 +1,13 @@
+egovframework\practice\helloworld\HelloWorldService.class
+egovframework\practice\test\service\impl\TestDAO.class
+egovframework\practice\test\service\impl\TestServiceImpl.class
+egovframework\practice\test\service\impl\TestMapper.class
+egovframework\practice\cmmn\EgovSampleOthersExcepHndlr.class
+egovframework\practice\cmmn\web\EgovImgPaginationRenderer.class
+egovframework\practice\test\service\TestService.class
+egovframework\practice\helloworld\HelloWorldClient.class
+egovframework\practice\test\web\TestController.class
+egovframework\practice\test\service\TestVO.class
+egovframework\practice\cmmn\EgovSampleExcepHndlr.class
+egovframework\practice\cmmn\web\EgovBindingInitializer.class
+egovframework\practice\helloworld\HelloWorldServiceImpl.class
