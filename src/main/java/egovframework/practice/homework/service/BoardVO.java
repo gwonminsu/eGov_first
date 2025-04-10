@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 public class BoardVO {
 
     private String idx;
-    private String userIdx; // 게시자 idx
+    private String author; // 게시자 이름
     private String parentBoardIdx; // 부모 게시글 idx (NULL 가능)
     private String title; // 제목
     private String password; // 비밀번호

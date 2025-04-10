@@ -3,11 +3,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>Test List</title>
+    <title>게시판</title>
     <!-- 필요 시 CSS 및 JavaScript 파일 포함 -->
 </head>
 <body>
     <h2>게시판 목록(테스트용 무지성Ver.)</h2>
+    <button type="button" onclick="location.href='boardForm.do'">글쓰기</button>
     <table border="1">
         <tr>
             <th>Idx</th>
@@ -24,7 +25,7 @@
         <c:forEach var="item" items="${boardList}">
             <tr>
                 <td>${item.idx}</td>
-                <td>${item.userIdx}</td>
+                <td>${item.author}</td>
                 <td>${item.parentBoardIdx}</td>
                 <td>${item.title}</td>
                 <td>${item.password}</td>
