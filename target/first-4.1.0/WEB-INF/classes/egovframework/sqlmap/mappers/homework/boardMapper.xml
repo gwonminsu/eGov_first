@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="BoardDAO">
+    <!-- 무지성 게시글 목록 조회 -->
+    <select id="selectBoardList" resultType="egovframework.practice.homework.service.BoardVO">
+        SELECT * FROM board ORDER BY created_at DESC
+    </select>
+
+    <!-- 전체 게시글 개수 조회 -->
+    <select id="selectBoardCount" resultType="int">
+        SELECT COUNT(*) FROM board
+    </select>
+
+    <!-- 메인 게시글(원글) 목록 조회 -->
+    <select id="selectMainBoardList" resultType="egovframework.practice.homework.service.BoardVO">
+        SELECT * FROM board
+        WHERE parent_board_idx IS NULL
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 전체 메인 게시글(원글) 개수 조회 -->
+    <select id="selectMainBoardCount" resultType="int">
+        SELECT COUNT(*) FROM board
+        WHERE parent_board_idx IS NULL
+    </select>
+
+    <!-- 게시글 등록 -->
+    <insert id="insertBoard" parameterType="egovframework.practice.homework.service.BoardVO">
+        INSERT INTO board
+        (idx, author, parent_board_idx, title, password, hit, content, created_at, updated_at)
+        VALUES
+        (#{idx}, #{author}, #{parentBoardIdx}, #{title}, #{password}, #{hit}, #{content}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <!-- 단일 게시글 조회 -->
+    <select id="selectBoard" parameterType="string" resultType="egovframework.practice.homework.service.BoardVO">
+        SELECT * FROM board
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- 조회수 증가 -->
+    <update id="updateHitCount" parameterType="string">
+        UPDATE board
+        SET hit = hit + 1
+        WHERE idx = #{idx}
+    </update>
+
+    <!-- 계층형 답글 조회 (레벨 2까지) -->
+    <select id="selectReplyTree" parameterType="string" resultType="egovframework.practice.homework.service.BoardVO">
+        <![CDATA[
+        WITH RECURSIVE reply_tree AS (
+          -- 1단계: 직접 달린 답글, root_created_at에 자신의 created_at 저장
+          SELECT
+            idx,
+            parent_board_idx,
+            title,
+            author,
+            content,
+            hit,
+            created_at,
+            updated_at,
+            1 AS level,
+            created_at AS root_created_at
+          FROM board
+          WHERE parent_board_idx = #{parentIdx}
+
+          UNION ALL
+
+          -- 2단계: 답글의 답글, root_created_at은 1단계에서 물려받음
+          SELECT
+            b.idx,
+            b.parent_board_idx,
+            b.title,
+            b.author,
+            b.content,
+            b.hit,
+            b.created_at,
+            b.updated_at,
+            rt.level + 1 AS level,
+            rt.root_created_at
+          FROM board b
+          JOIN reply_tree rt
+            ON b.parent_board_idx = rt.idx
+          WHERE rt.level < 2
+        )
+        -- 최종 선택 시에는 root_created_at, level, created_at 순으로 정렬
+        SELECT
+          idx,
+          parent_board_idx,
+          title,
+          author,
+          content,
+          hit,
+          created_at,
+          updated_at,
+          level
+        FROM reply_tree
+        ORDER BY root_created_at, level, created_at
+    ]]>
+    </select>
+
+</mapper>
