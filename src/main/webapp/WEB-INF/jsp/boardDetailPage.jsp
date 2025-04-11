@@ -25,17 +25,24 @@
       </form>
     </c:otherwise>
   </c:choose>
-  <form action="updateBoardForm.do" method="get" style="display:inline;">
-    <input type="hidden" name="idx" value="${board.idx}"/>
-    비밀번호: <input type="password" name="password"/>
-    <button type="submit">수정</button>
+
+  <form id="pwForm" method="post" style="display:inline;">
+    <input type="hidden" name="idx" value="${board.idx}" />
+    비밀번호: <input type="password" name="password" />
+
+    <button type="submit"
+            formaction="updateBoardForm.do"
+            formmethod="get">
+      수정
+    </button>
+    <button type="submit"
+            formaction="deleteBoard.do"
+            formmethod="post">
+      삭제
+    </button>
   </form>
-  <form action="deleteBoard.do" method="post" style="display:inline;">
-    <input type="hidden" name="idx" value="${board.idx}"/>
-    비밀번호: <input type="password" name="password"/>
-    <button type="submit">삭제</button>
-  </form>
-    <c:choose>
+
+  <c:choose>
       <%-- 원글 또는 첫 답글(level=1)일 때만 활성화 --%>
       <c:when test="${board.level < 2}">
         <form action="boardForm.do" method="get" style="display:inline;">

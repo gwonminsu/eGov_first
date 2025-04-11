@@ -6,7 +6,7 @@
 <mapper namespace="BoardDAO">
     <!-- 무지성 게시글 목록 조회 -->
     <select id="selectBoardList" resultType="egovframework.practice.homework.service.BoardVO">
-        SELECT * FROM board
+        SELECT * FROM board ORDER BY created_at DESC
     </select>
 
     <!-- 게시글 등록 -->
@@ -34,17 +34,54 @@
     <select id="selectReplyTree" parameterType="string" resultType="egovframework.practice.homework.service.BoardVO">
         <![CDATA[
         WITH RECURSIVE reply_tree AS (
-        SELECT idx, parent_board_idx, title, author, content, hit, created_at, updated_at, 1 AS level
-        FROM board
-        WHERE parent_board_idx = #{parentIdx}
-        UNION ALL
-        SELECT b.idx, b.parent_board_idx, b.title, b.author, b.content, b.hit, b.created_at, b.updated_at, rt.level + 1
-        FROM board b
-        JOIN reply_tree rt ON b.parent_board_idx = rt.idx
-        WHERE rt.level < 2
+          -- 1단계: 직접 달린 답글, root_created_at에 자신의 created_at 저장
+          SELECT
+            idx,
+            parent_board_idx,
+            title,
+            author,
+            content,
+            hit,
+            created_at,
+            updated_at,
+            1 AS level,
+            created_at AS root_created_at
+          FROM board
+          WHERE parent_board_idx = #{parentIdx}
+
+          UNION ALL
+
+          -- 2단계: 답글의 답글, root_created_at은 1단계에서 물려받음
+          SELECT
+            b.idx,
+            b.parent_board_idx,
+            b.title,
+            b.author,
+            b.content,
+            b.hit,
+            b.created_at,
+            b.updated_at,
+            rt.level + 1 AS level,
+            rt.root_created_at
+          FROM board b
+          JOIN reply_tree rt
+            ON b.parent_board_idx = rt.idx
+          WHERE rt.level < 2
         )
-        SELECT * FROM reply_tree ORDER BY level, created_at
-        ]]>
+        -- 최종 선택 시에는 root_created_at, level, created_at 순으로 정렬
+        SELECT
+          idx,
+          parent_board_idx,
+          title,
+          author,
+          content,
+          hit,
+          created_at,
+          updated_at,
+          level
+        FROM reply_tree
+        ORDER BY root_created_at, level, created_at
+    ]]>
     </select>
 
 </mapper>
