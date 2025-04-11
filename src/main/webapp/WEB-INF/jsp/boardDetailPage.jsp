@@ -10,9 +10,21 @@
   <hr/>
 
   <!-- 버튼 그룹 -->
-  <form action="boardList.do" method="get" style="display:inline;">
-    <button type="submit">목록</button>
-  </form>
+  <c:choose>
+    <%-- level 0: 원글 → 목록 --%>
+    <c:when test="${board.level == 0}">
+      <form action="boardList.do" method="get" style="display:inline;">
+        <button type="submit">목록</button>
+      </form>
+    </c:when>
+    <%-- level 1 or 2: 답글/답글의답글 → 이전(부모 상세) --%>
+    <c:otherwise>
+      <form action="selectBoard.do" method="get" style="display:inline;">
+        <input type="hidden" name="idx" value="${board.parentBoardIdx}" />
+        <button type="submit">이전</button>
+      </form>
+    </c:otherwise>
+  </c:choose>
   <form action="updateBoardForm.do" method="get" style="display:inline;">
     <input type="hidden" name="idx" value="${board.idx}"/>
     비밀번호: <input type="password" name="password"/>

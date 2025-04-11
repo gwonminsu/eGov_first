@@ -55,7 +55,17 @@
             <tr>
                 <td colspan="2" style="text-align:center;">
                     <input type="submit" value="등록하기" />
-                    <input type="button" value="취소" onclick="location.href='boardList.do';" />
+                    <!-- parentBoardIdx 값에 따라 취소 시 이동 경로 결정 -->
+                    <c:choose>
+                      <c:when test="${not empty board.parentBoardIdx}">
+                        <input type="button" value="취소"
+                               onclick="location.href='selectBoard.do?idx=${board.parentBoardIdx}';" />
+                      </c:when>
+                      <c:otherwise>
+                        <input type="button" value="취소"
+                               onclick="location.href='boardList.do';" />
+                      </c:otherwise>
+                    </c:choose>
                 </td>
             </tr>
         </table>
