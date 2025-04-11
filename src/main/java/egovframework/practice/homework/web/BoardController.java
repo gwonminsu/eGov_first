@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import javax.annotation.Resource;
@@ -50,9 +51,41 @@ public class BoardController {
 
     // 게시글 작성 폼 페이지 호출
     @RequestMapping(value="/boardForm.do", method= RequestMethod.GET)
-    public String goBoardForm(Model model) {
-        model.addAttribute("board", new BoardVO()); // 폼 검증용 바인딩 객체를 추가
+    public String goBoardForm(@RequestParam(value="parentBoardIdx", required=false) String parentBoardIdx, Model model) {
+        // 폼에 바인딩할 VO 생성 및 부모 idx 세팅
+        BoardVO boardVO = new BoardVO();
+        boardVO.setParentBoardIdx(parentBoardIdx);
+        model.addAttribute("board", boardVO); // 폼 검증용 바인딩 객체를 추가
         return "boardFormPage";
+    }
+
+    // 게시글 상세 조회
+    @RequestMapping(value="/selectBoard.do", method=RequestMethod.GET)
+    public String selectBoard(@RequestParam("idx") String idx, Model model) throws Exception {
+        // 조회수 증가
+        boardService.updateHitCount(idx);
+
+        // 게시글 조회
+        BoardVO board = boardService.selectBoard(idx);
+        int level = 0;
+        String parentIdx = board.getParentBoardIdx();
+        if (parentIdx != null && !parentIdx.isEmpty()) {
+            // 부모 글 가져오기
+            BoardVO parent = boardService.selectBoard(parentIdx);
+            // 부모의 부모가 있으면 level=2, 없으면 level=1
+            level = (parent.getParentBoardIdx() != null && !parent.getParentBoardIdx().isEmpty()) ? 2 : 1;
+        }
+        board.setLevel(level);
+        model.addAttribute("board", board);
+        log.info("SELECT 게시글 상세 데이터: {}", board);
+        log.info("SELECT 게시글 level: {}", level);
+
+        // 답글 트리 조회 (답글의 답글까지)
+        List<BoardVO> replies = boardService.selectReplyTree(idx);
+        model.addAttribute("replyList", replies);
+        log.info("SELECT 게시글 답글 목록 데이터: {}", replies);
+
+        return "boardDetailPage";
     }
 
     // 게시글 등록
@@ -75,6 +108,8 @@ public class BoardController {
         boardVO.setUpdatedAt(now);  // updated_at 값 설정
 
         boardService.insertBoard(boardVO);
+
+        log.info("INSERT 게시글 데이터: {}", boardVO);
 
         return "redirect:boardList.do";
     }

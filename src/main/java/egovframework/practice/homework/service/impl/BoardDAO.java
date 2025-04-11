@@ -20,8 +20,23 @@ public class BoardDAO {
 
     // 게시글 등록
     public void insertBoard(BoardVO boardVO) throws Exception {
-        // mybatis 매퍼 XML 파일의 id가 "BoardDAO.insertBoard"인 쿼리가 실행됩니다.
+        // mybatis 매퍼 XML 파일의 id가 "BoardDAO.insertBoard"인 쿼리가 실행
         sqlSession.insert("BoardDAO.insertBoard", boardVO);
     }
+
+    // 게시글 하나 조회
+    public BoardVO selectBoard(String idx) throws Exception {
+        return sqlSession.selectOne("BoardDAO.selectBoard", idx);
+    };
+
+    // 조회수 증가
+    public void updateHitCount(String idx) throws Exception {
+        sqlSession.update("BoardDAO.updateHitCount", idx);
+    }
+
+    // 답글 목록 조회
+    public List<BoardVO> selectReplyTree(String parentIdx) throws Exception {
+        return sqlSession.selectList("BoardDAO.selectReplyTree", parentIdx);
+    };
 
 }

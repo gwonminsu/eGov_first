@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 @Service("BoardService")
@@ -24,9 +25,27 @@ public class BoardServiceImpl implements BoardService {
         return boardDAO.selectBoardList();
     }
 
+    // 게시글 등록
     @Override
     public void insertBoard(BoardVO boardVO) throws Exception {
         boardDAO.insertBoard(boardVO);
+    }
+
+    // 단일 게시글 조회
+    @Override
+    public BoardVO selectBoard(String idx) throws Exception {
+        return boardDAO.selectBoard(idx);
+    }
+
+    @Override
+    public void updateHitCount(String idx) throws Exception {
+        boardDAO.updateHitCount(idx);
+    }
+
+    // 게시글 답글 목록 조회
+    @Override
+    public List<BoardVO> selectReplyTree(String parentIdx) throws Exception {
+        return boardDAO.selectReplyTree(parentIdx);
     }
 
 }

@@ -23,4 +23,5 @@ public class BoardVO {
     private Timestamp createdAt; // 생성 일시
     private Timestamp updatedAt; // 수정 일시
 
+    private int level; // 답글 레벨
 }

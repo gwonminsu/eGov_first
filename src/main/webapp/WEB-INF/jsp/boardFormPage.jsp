@@ -22,6 +22,7 @@
 
     <!-- form의 action을 BoardController의 insert 처리 경로로 설정 -->
     <form:form action="insertBoard.do" modelAttribute="board" method="post">
+        <form:hidden path="parentBoardIdx"/>
         <table>
             <tr>
                 <th>제목</th>

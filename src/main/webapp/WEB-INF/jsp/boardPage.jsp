@@ -27,7 +27,11 @@
                 <td>${item.idx}</td>
                 <td>${item.author}</td>
                 <td>${item.parentBoardIdx}</td>
-                <td>${item.title}</td>
+                <td>
+                    <a href="selectBoard.do?idx=${item.idx}">
+                        ${item.title}
+                    </a>
+                </td>
                 <td>${item.password}</td>
                 <td>${item.hit}</td>
                 <td>${item.content}</td>
