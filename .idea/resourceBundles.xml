@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ResourceBundleManager">
+    <file url="file://$PROJECT_DIR$/src/main/resources/egovframework/message/message-common.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/egovframework/message/message-common_en.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/egovframework/message/message-common_ko.properties" />
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/src/main/resources/egovframework/message/message-common.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/egovframework/message/message-common_en.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/egovframework/message/message-common_ko.properties" />
+      <base-name>message-common</base-name>
+    </custom-resource-bundle>
+  </component>
+</project>

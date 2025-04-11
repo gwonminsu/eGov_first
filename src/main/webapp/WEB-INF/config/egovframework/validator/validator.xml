@@ -17,6 +17,21 @@
         		<arg0 key="title.sample.regUser" />
 			</field>
         </form>
+
+		<form name="boardVO">
+			<field property="title" depends="required">
+				<arg0 key="title.board.title" />
+			</field>
+			<field property="author" depends="required">
+				<arg0 key="title.board.author" />
+			</field>
+			<field property="password" depends="required">
+				<arg0 key="title.board.password" />
+			</field>
+			<field property="content" depends="required">
+				<arg0 key="title.board.content" />
+			</field>
+		</form>
     </formset>
 
 </form-validation>

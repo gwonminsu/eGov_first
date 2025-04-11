@@ -13,11 +13,16 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
     </context:component-scan>
 
-    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-        <property name="webBindingInitializer">
-            <bean class="egovframework.practice.cmmn.web.EgovBindingInitializer"/>
-        </property>
-    </bean>
+<!-- 커스텀으로 검증하기 위해 주석처리 -->
+<!--    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
+<!--        <property name="webBindingInitializer">-->
+<!--            <bean class="egovframework.practice.cmmn.web.EgovBindingInitializer"/>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+    <!-- Spring MVC 검증 활성화 -->
+    <mvc:annotation-driven validator="beanValidator"/>
+
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
         <property name="interceptors">
             <list>
@@ -61,4 +66,5 @@
 	<!-- /For Pagination Tag -->
 
     <mvc:view-controller path="/cmmn/validator.do" view-name="cmmn/validator"/>
+
 </beans>
