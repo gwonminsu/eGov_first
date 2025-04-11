@@ -49,6 +49,15 @@ public class BoardController {
         return "boardPage";
     }
 
+    // 메인(원글) 목록
+    @RequestMapping("/mainBoardList.do")
+    public String selectMainBoardList(Model model) throws Exception {
+        List<BoardVO> list = boardService.getMainBoardList();
+        log.info("SELECT 원글 목록 데이터: {}", list);
+        model.addAttribute("boardList", list);
+        return "boardPage";
+    }
+
     // 게시글 작성 폼 페이지 호출
     @RequestMapping(value="/boardForm.do", method= RequestMethod.GET)
     public String goBoardForm(@RequestParam(value="parentBoardIdx", required=false) String parentBoardIdx, Model model) {

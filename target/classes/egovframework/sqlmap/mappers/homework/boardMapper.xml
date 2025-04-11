@@ -9,6 +9,13 @@
         SELECT * FROM board ORDER BY created_at DESC
     </select>
 
+    <!-- 메인 게시글 목록 조회 -->
+    <select id="selectMainBoardList" resultType="egovframework.practice.homework.service.BoardVO">
+        SELECT * FROM board
+        WHERE parent_board_idx IS NULL
+        ORDER BY created_at DESC
+    </select>
+
     <!-- 게시글 등록 -->
     <insert id="insertBoard" parameterType="egovframework.practice.homework.service.BoardVO">
         INSERT INTO board

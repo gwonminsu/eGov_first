@@ -25,6 +25,12 @@ public class BoardServiceImpl implements BoardService {
         return boardDAO.selectBoardList();
     }
 
+    // 원글 목록 조회
+    @Override
+    public List<BoardVO> getMainBoardList() throws Exception {
+        return boardDAO.selectMainBoardList();
+    }
+
     // 게시글 등록
     @Override
     public void insertBoard(BoardVO boardVO) throws Exception {

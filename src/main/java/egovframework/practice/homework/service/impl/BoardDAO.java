@@ -18,6 +18,11 @@ public class BoardDAO {
         return sqlSession.selectList("BoardDAO.selectBoardList");
     }
 
+    // 원글 목록 조회
+    public List<BoardVO> selectMainBoardList() throws Exception {
+        return sqlSession.selectList("BoardDAO.selectMainBoardList");
+    }
+
     // 게시글 등록
     public void insertBoard(BoardVO boardVO) throws Exception {
         // mybatis 매퍼 XML 파일의 id가 "BoardDAO.insertBoard"인 쿼리가 실행

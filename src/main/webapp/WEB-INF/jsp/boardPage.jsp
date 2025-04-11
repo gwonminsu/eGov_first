@@ -7,7 +7,7 @@
     <!-- 필요 시 CSS 및 JavaScript 파일 포함 -->
 </head>
 <body>
-    <h2>게시판 목록(테스트용 무지성Ver.)</h2>
+    <h2>게시글 목록</h2>
     <button type="button" onclick="location.href='boardForm.do'">글쓰기</button>
     <table border="1">
         <tr>
