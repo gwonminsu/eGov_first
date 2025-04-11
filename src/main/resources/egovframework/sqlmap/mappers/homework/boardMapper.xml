@@ -9,11 +9,22 @@
         SELECT * FROM board ORDER BY created_at DESC
     </select>
 
-    <!-- 메인 게시글 목록 조회 -->
+    <!-- 전체 게시글 개수 조회 -->
+    <select id="selectBoardCount" resultType="int">
+        SELECT COUNT(*) FROM board
+    </select>
+
+    <!-- 메인 게시글(원글) 목록 조회 -->
     <select id="selectMainBoardList" resultType="egovframework.practice.homework.service.BoardVO">
         SELECT * FROM board
         WHERE parent_board_idx IS NULL
         ORDER BY created_at DESC
+    </select>
+
+    <!-- 전체 메인 게시글(원글) 개수 조회 -->
+    <select id="selectMainBoardCount" resultType="int">
+        SELECT COUNT(*) FROM board
+        WHERE parent_board_idx IS NULL
     </select>
 
     <!-- 게시글 등록 -->

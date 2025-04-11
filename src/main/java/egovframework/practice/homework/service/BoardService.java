@@ -7,8 +7,14 @@ public interface BoardService {
     // 무지성 게시글 목록 조회
     List<BoardVO> getBoardList() throws Exception;
 
+    // 전체 게시글 개수 조회
+    int getBoardCount() throws Exception;
+
     // 원글 목록 조회
     List<BoardVO> getMainBoardList() throws Exception;
+
+    // 전체 원글 개수 조회
+    int getMainBoardCount() throws Exception;
 
     // 게시글 등록
     void insertBoard(BoardVO boardVO) throws Exception;

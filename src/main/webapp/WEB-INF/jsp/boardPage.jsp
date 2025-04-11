@@ -1,13 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> <!-- 숫자 포맷팅을 위한 라이브러리 -->
 <html>
 <head>
     <title>게시판</title>
-    <!-- 필요 시 CSS 및 JavaScript 파일 포함 -->
+    <style>
+        .count-red {
+            color: red;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
     <h2>게시글 목록</h2>
+    <p>전체: <span class="count-red"><fmt:formatNumber value="${totalCount}" type="number" groupingUsed="true"/></span>건</p>
     <button type="button" onclick="location.href='boardForm.do'">글쓰기</button>
     <table border="1">
         <tr>

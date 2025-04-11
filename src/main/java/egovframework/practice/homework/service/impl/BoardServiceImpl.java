@@ -25,10 +25,22 @@ public class BoardServiceImpl implements BoardService {
         return boardDAO.selectBoardList();
     }
 
+    // 전체 게시글 개수 조회
+    @Override
+    public int getBoardCount() throws Exception {
+        return boardDAO.selectBoardCount();
+    }
+
     // 원글 목록 조회
     @Override
     public List<BoardVO> getMainBoardList() throws Exception {
         return boardDAO.selectMainBoardList();
+    }
+
+    // 전체 원글 개수 조회
+    @Override
+    public int getMainBoardCount() throws Exception {
+        return boardDAO.selectMainBoardCount();
     }
 
     // 게시글 등록

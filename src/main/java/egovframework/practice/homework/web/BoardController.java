@@ -43,18 +43,28 @@ public class BoardController {
     // 게시글 목록 가져오기(일단 무지성으로 모든 데이터 가져옴)
     @RequestMapping("/boardList.do")
     public String selectBoardList(ModelMap model) throws Exception {
+        // 글 목록
         List<BoardVO> list = boardService.getBoardList();
         log.info("SELECT 게시글 목록 데이터: {}", list);
         model.addAttribute("boardList", list);
+        // 전체 글 개수
+        int totalCount = boardService.getBoardCount();
+        log.info("전체 글 개수: {}", totalCount);
+        model.addAttribute("totalCount", totalCount);
         return "boardPage";
     }
 
     // 메인(원글) 목록
     @RequestMapping("/mainBoardList.do")
     public String selectMainBoardList(Model model) throws Exception {
+        // 글 목록
         List<BoardVO> list = boardService.getMainBoardList();
         log.info("SELECT 원글 목록 데이터: {}", list);
         model.addAttribute("boardList", list);
+        // 전체 원글 개수
+        int totalCount = boardService.getMainBoardCount();
+        log.info("전체 원글 개수: {}", totalCount);
+        model.addAttribute("totalCount", totalCount);
         return "boardPage";
     }
 

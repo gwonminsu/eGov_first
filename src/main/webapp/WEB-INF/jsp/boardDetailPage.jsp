@@ -23,7 +23,7 @@
   <c:choose>
     <%-- level 0: 원글 → 목록 --%>
     <c:when test="${board.level == 0}">
-      <form action="boardList.do" method="get" style="display:inline;">
+      <form action="mainBoardList.do" method="get" style="display:inline;">
         <button type="submit">목록</button>
       </form>
     </c:when>
