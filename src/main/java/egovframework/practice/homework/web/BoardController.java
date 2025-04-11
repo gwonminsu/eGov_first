@@ -20,8 +20,6 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.List;
 
-// 깃 테스트 용 주석
-
 @Controller
 @RequestMapping("/board")
 public class BoardController {
