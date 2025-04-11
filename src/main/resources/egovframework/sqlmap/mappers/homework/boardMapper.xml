@@ -7,4 +7,11 @@
     <select id="selectBoardList" resultType="egovframework.practice.homework.service.BoardVO">
         SELECT * FROM board
     </select>
+
+    <insert id="insertBoard" parameterType="egovframework.practice.homework.service.BoardVO">
+        INSERT INTO board
+        (idx, author, parent_board_idx, title, password, hit, content, created_at, updated_at)
+        VALUES
+        (#{idx}, #{author}, #{parentBoardIdx}, #{title}, #{password}, #{hit}, #{content}, #{createdAt}, #{updatedAt})
+    </insert>
 </mapper>

@@ -7,12 +7,15 @@ import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Controller
@@ -21,7 +24,7 @@ public class BoardController {
 
     private static final Logger log = LoggerFactory.getLogger(BoardController.class);
 
-    @Resource(name="egovIdGnrService")
+    @Resource(name="boardIdGnrService")
     private EgovIdGnrService idgen;
 
     @Resource(name = "BoardService")
@@ -48,6 +51,23 @@ public class BoardController {
     @RequestMapping(value="/boardForm.do", method= RequestMethod.GET)
     public String goBoardForm() {
         return "boardFormPage";
+    }
+
+    // 게시글 등록
+    @RequestMapping(value="/insertBoard.do", method=RequestMethod.POST)
+    public String insertBoard(@ModelAttribute("board") BoardVO boardVO, Model model) throws Exception {
+        // idgen을 사용하여 게시글 PK 자동 생성
+        String newBoardId = idgen.getNextStringId();  // idgen 서비스에서 새 ID 생성
+        boardVO.setIdx(newBoardId); // 생성된 id를 Board VO에 설정
+
+        // 현재 타임스탬프 생성 후, 생성일과 수정일 필드에 설정
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        boardVO.setCreatedAt(now);  // created_at 값 설정
+        boardVO.setUpdatedAt(now);  // updated_at 값 설정
+
+        boardService.insertBoard(boardVO);
+
+        return "redirect:boardList.do";
     }
 
 }

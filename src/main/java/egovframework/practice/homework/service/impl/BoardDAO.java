@@ -18,4 +18,10 @@ public class BoardDAO {
         return sqlSession.selectList("BoardDAO.selectBoardList");
     }
 
+    // 게시글 등록
+    public void insertBoard(BoardVO boardVO) throws Exception {
+        // mybatis 매퍼 XML 파일의 id가 "BoardDAO.insertBoard"인 쿼리가 실행됩니다.
+        sqlSession.insert("BoardDAO.insertBoard", boardVO);
+    }
+
 }
