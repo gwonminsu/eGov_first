@@ -69,15 +69,17 @@ public class BoardController {
         BoardVO board = boardService.selectBoard(idx);
         int level = 0;
         String parentIdx = board.getParentBoardIdx();
+        // 부모 글 가져오기
+        BoardVO parent = boardService.selectBoard(parentIdx);
         if (parentIdx != null && !parentIdx.isEmpty()) {
-            // 부모 글 가져오기
-            BoardVO parent = boardService.selectBoard(parentIdx);
             // 부모의 부모가 있으면 level=2, 없으면 level=1
             level = (parent.getParentBoardIdx() != null && !parent.getParentBoardIdx().isEmpty()) ? 2 : 1;
         }
         board.setLevel(level);
         model.addAttribute("board", board);
+        model.addAttribute("parentBoard", parent);
         log.info("SELECT 게시글 상세 데이터: {}", board);
+        log.info("SELECT 게시글 부모 상세 데이터: {}", board);
         log.info("SELECT 게시글 level: {}", level);
 
         // 답글 트리 조회 (답글의 답글까지)

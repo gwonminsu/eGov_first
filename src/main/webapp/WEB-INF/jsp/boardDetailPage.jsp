@@ -3,11 +3,21 @@
 <html>
 <head><title>게시글 상세</title></head>
 <body>
-  <h2>${board.title}</h2>
-  <div>작성자: ${board.author} | 등록일: ${board.createdAt} | 조회수: ${board.hit}</div>
-  <hr/>
-  <div>${board.content}</div>
-  <hr/>
+    <c:choose>
+        <%-- level 0: 원글 --%>
+        <c:when test="${board.level == 0}">
+            <h2>${board.title}</h2>
+        </c:when>
+        <%-- level 1 or 2: 답글/답글의답글 --%>
+        <c:otherwise>
+            <h3>[${parentBoard.title}]의 답글</h3>
+            <h2>${board.title}</h2>
+        </c:otherwise>
+    </c:choose>
+    <div>작성자: ${board.author} | 등록일: ${board.createdAt} | 조회수: ${board.hit}</div>
+    <hr/>
+    <div>${board.content}</div>
+    <hr/>
 
   <!-- 버튼 그룹 -->
   <c:choose>
