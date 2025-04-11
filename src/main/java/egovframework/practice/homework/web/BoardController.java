@@ -79,7 +79,7 @@ public class BoardController {
         model.addAttribute("board", board);
         model.addAttribute("parentBoard", parent);
         log.info("SELECT 게시글 상세 데이터: {}", board);
-        log.info("SELECT 게시글 부모 상세 데이터: {}", board);
+        log.info("SELECT 게시글 부모 상세 데이터: {}", parent);
         log.info("SELECT 게시글 level: {}", level);
 
         // 답글 트리 조회 (답글의 답글까지)
