@@ -14,7 +14,7 @@ import java.util.List;
 @Service("BoardService")
 public class BoardServiceImpl implements BoardService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BoardServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
 
     @Resource(name = "BoardDAO")
     protected BoardDAO boardDAO;
@@ -64,6 +64,29 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<BoardVO> selectReplyTree(String parentIdx) throws Exception {
         return boardDAO.selectReplyTree(parentIdx);
+    }
+
+    // 비밀번호 검증
+    @Override
+    public boolean checkPassword(String idx, String password) throws Exception {
+        String actual = boardDAO.selectPassword(idx);
+        return actual != null && actual.equals(password);
+    }
+
+    // 게시글 삭제(자식 게시글까지 일괄 적용)
+    @Override
+    public void deleteBoard(String idx) throws Exception {
+        // 1) 자식 답글 조회
+        List<BoardVO> replies = boardDAO.selectReplyTree(idx);
+        // 2) 답글들 한 번에 삭제
+        for (BoardVO r : replies) {
+            boardDAO.deleteBoard(r.getIdx());
+            log.info("DELETE 추가 삭제된 자식 게시글 idx: {}", r.getIdx());
+        }
+        // 4) 원글 삭제
+        BoardVO deletedBoard = boardDAO.selectBoard(idx);
+        boardDAO.deleteBoard(idx);
+        log.info("DELETE 삭제된 게시글 데이터: {}", deletedBoard);
     }
 
 }

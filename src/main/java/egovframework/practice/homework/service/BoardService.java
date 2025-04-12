@@ -28,4 +28,10 @@ public interface BoardService {
     // 게시글 답글 목록 조회
     List<BoardVO> selectReplyTree(String parentIdx) throws Exception;
 
+    // 비밀번호 검증
+    boolean checkPassword(String idx, String password) throws Exception;
+
+    // 게시글 삭제(자식 게시글까지 일괄 적용)
+    void deleteBoard(String idx) throws Exception;
+
 }

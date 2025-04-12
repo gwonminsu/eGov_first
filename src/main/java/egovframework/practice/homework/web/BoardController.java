@@ -132,7 +132,35 @@ public class BoardController {
 
         log.info("INSERT 게시글 데이터: {}", boardVO);
 
-        return "redirect:mainBoardList.do";
+        // 작성한 글 상세 페이지로 이동
+        return "redirect:selectBoard.do?idx=" + newBoardId;
+    }
+
+    // 삭제 처리
+    @RequestMapping(value="/deleteBoard.do", method=RequestMethod.POST)
+    public String deleteBoard(@RequestParam("idx") String idx,
+                              @RequestParam("password") String password,
+                              Model model) throws Exception {
+        // 비밀번호 검증
+        if (!boardService.checkPassword(idx, password)) {
+            model.addAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
+            return selectBoard(idx, model);
+        }
+
+        // 부모 게시글 idx
+        BoardVO board = boardService.selectBoard(idx);
+        String parentIdx = board.getParentBoardIdx();
+
+        // 자식을 포함한 게시글 일괄 삭제
+        boardService.deleteBoard(idx);
+
+        if (parentIdx != null && !parentIdx.isEmpty()) {
+            // 부모가 있는 경우: 부모 상세페이지로
+            return "redirect:selectBoard.do?idx=" + parentIdx;
+        } else {
+            // 부모가 없는 경우(원글): 메인 목록 페이지로
+            return "redirect:mainBoardList.do";
+        }
     }
 
 }

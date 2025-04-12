@@ -102,4 +102,14 @@
     ]]>
     </select>
 
+    <!-- 검증용 비밀번호 조회 -->
+    <select id="selectPassword" parameterType="string" resultType="string">
+        SELECT password FROM board WHERE idx = #{idx}
+    </select>
+
+    <!-- 단일 게시글 삭제 -->
+    <delete id="deleteBoard" parameterType="string">
+        DELETE FROM board WHERE idx = #{idx}
+    </delete>
+
 </mapper>

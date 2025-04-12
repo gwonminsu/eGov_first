@@ -54,4 +54,14 @@ public class BoardDAO {
         return sqlSession.selectList("BoardDAO.selectReplyTree", parentIdx);
     };
 
+    // 검증용 비밀번호 조회
+    public String selectPassword(String idx) throws Exception {
+        return sqlSession.selectOne("BoardDAO.selectPassword", idx);
+    }
+
+    // 게시물 삭제
+    public void deleteBoard(String idx) throws Exception {
+        sqlSession.delete("BoardDAO.deleteBoard", idx);
+    }
+
 }

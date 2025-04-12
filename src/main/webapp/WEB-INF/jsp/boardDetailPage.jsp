@@ -3,6 +3,11 @@
 <html>
 <head><title>게시글 상세</title></head>
 <body>
+    <!-- 에러 메시지 -->
+    <c:if test="${not empty errorMessage}">
+        <div class="errorSummary">${errorMessage}</div>
+    </c:if>
+
     <c:choose>
         <%-- level 0: 원글 --%>
         <c:when test="${board.level == 0}">
@@ -40,14 +45,10 @@
     <input type="hidden" name="idx" value="${board.idx}" />
     비밀번호: <input type="password" name="password" />
 
-    <button type="submit"
-            formaction="updateBoardForm.do"
-            formmethod="get">
+    <button type="submit" formaction="updateBoardForm.do">
       수정
     </button>
-    <button type="submit"
-            formaction="deleteBoard.do"
-            formmethod="post">
+    <button type="submit" formaction="deleteBoard.do">
       삭제
     </button>
   </form>
