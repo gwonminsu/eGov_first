@@ -66,7 +66,7 @@
                       </c:when>
                       <c:otherwise>
                         <input type="button" value="취소"
-                               onclick="location.href='boardList.do';" />
+                               onclick="location.href='mainBoardList.do';" />
                       </c:otherwise>
                     </c:choose>
                 </td>
