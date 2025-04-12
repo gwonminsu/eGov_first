@@ -22,7 +22,10 @@
 
     <!-- form의 action을 BoardController의 insert 처리 경로로 설정 -->
     <form:form action="insertBoard.do" modelAttribute="board" method="post">
-        <form:hidden path="parentBoardIdx"/>
+        <%-- 부모게시글idx가 있을 때만 필드 출력(공백문자 삽입 방지) --%>
+        <c:if test="${not empty board.parentBoardIdx}">
+            <form:hidden path="parentBoardIdx"/>
+        </c:if>
         <table>
             <tr>
                 <th>제목</th>

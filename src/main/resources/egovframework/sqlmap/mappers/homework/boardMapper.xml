@@ -51,7 +51,7 @@
     <!-- 계층형 답글 조회 (레벨 2까지) -->
     <select id="selectReplyTree" parameterType="string" resultType="egovframework.practice.homework.service.BoardVO">
         <![CDATA[
-        WITH RECURSIVE reply_tree AS (
+        WITH RECURSIVE reply_tree AS ( -- 재귀적 처리
           -- 1단계: 직접 달린 답글, root_created_at에 자신의 created_at 저장
           SELECT
             idx,

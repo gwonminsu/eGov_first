@@ -132,7 +132,7 @@ public class BoardController {
 
         log.info("INSERT 게시글 데이터: {}", boardVO);
 
-        return "redirect:boardList.do";
+        return "redirect:mainBoardList.do";
     }
 
 }
