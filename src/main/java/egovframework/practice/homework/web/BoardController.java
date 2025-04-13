@@ -147,7 +147,7 @@ public class BoardController {
         }
 
         // 2) VO에서 필요한 값 꺼내기
-        String storedFileName = fileVO.getFileUuid();   // 실제 저장된 파일명
+        String storedFileName = fileVO.getFileUuid() + fileVO.getExt();   // 실제 저장된 파일명
         String originalFileName = fileVO.getFileName(); // 사용자에게 보여줄 원본 파일명
         String fullPath = fileVO.getFilePath() + File.separator + storedFileName;
 

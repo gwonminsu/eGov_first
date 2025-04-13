@@ -55,8 +55,9 @@ public class AttachedFileServiceImpl implements AttachedFileService {
             vo.setBoardIdx(boardIdx);
             vo.setFileName(origName);
             vo.setFileUuid(uuid);
-            vo.setFilePath(dest.getAbsolutePath());
+            vo.setFilePath(uploadDir.getAbsolutePath());
             vo.setFileSize(mf.getSize());
+            vo.setExt(ext);
             dao.insert(vo); // 첨부파일 테이블에 추가
         }
     }

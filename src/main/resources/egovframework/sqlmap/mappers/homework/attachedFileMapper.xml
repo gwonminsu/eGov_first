@@ -7,9 +7,9 @@
     <!-- 첨부파일 등록 -->
     <insert id="insert" parameterType="egovframework.practice.homework.service.AttachedFileVO">
         INSERT INTO attachedFile
-            (idx, board_idx, file_name, file_uuid, file_path, file_size)
+            (idx, board_idx, file_name, file_uuid, file_path, file_size, ext)
         VALUES
-            (#{idx}, #{boardIdx}, #{fileName}, #{fileUuid}, #{filePath}, #{fileSize})
+            (#{idx}, #{boardIdx}, #{fileName}, #{fileUuid}, #{filePath}, #{fileSize}, #{ext})
     </insert>
 
     <!-- 게시물 첨부파일 목록 가져오기 -->

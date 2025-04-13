@@ -40,7 +40,7 @@
     <ul>
         <c:forEach var="f" items="${fileList}">
             <li>
-                <a href="downloadFile.do?idx=${f.idx}">${f.fileName}</a>
+                <a href="downloadFile.do?fileIdx=${f.idx}">${f.fileName}</a>
                 (${f.fileSize} bytes)
             </li>
         </c:forEach>

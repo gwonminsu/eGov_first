@@ -21,4 +21,6 @@ public class AttachedFileVO {
     private long fileSize; // 첨부파일 사이즈
     private Timestamp createdAt; // 첨부파일 추가 일시
 
+    private String ext;
+
 }
