@@ -1,7 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
-<head><title>게시글 상세</title></head>
+<head>
+    <title>게시글 상세</title>
+    <style>
+        .errorSummary { border:1px solid red; padding:10px; margin-bottom:15px; color: red; }
+        .updatedMessage { color: gray; font-size: 0.8em; }
+    </style>
+</head>
 <body>
     <!-- 에러 메시지 -->
     <c:if test="${not empty errorMessage}">
@@ -19,6 +25,12 @@
             <h2>${board.title}</h2>
         </c:otherwise>
     </c:choose>
+    <!-- 수정일이 작성일과 다를 때만 표시 -->
+    <c:if test="${board.updatedAt.time ne board.createdAt.time}">
+      <span class="updatedMessage">
+        ( ${board.updatedAt} 에 수정됨 )
+      </span>
+    </c:if>
     <div>작성자: ${board.author} | 등록일: ${board.createdAt} | 조회수: ${board.hit}</div>
     <hr/>
     <div>${board.content}</div>
@@ -45,10 +57,10 @@
     <input type="hidden" name="idx" value="${board.idx}" />
     비밀번호: <input type="password" name="password" />
 
-    <button type="submit" formaction="updateBoardForm.do">
+    <button type="submit" formaction="boardForm.do" formmethod="get">
       수정
     </button>
-    <button type="submit" formaction="deleteBoard.do">
+    <button type="submit" formaction="deleteBoard.do" formmethod="post">
       삭제
     </button>
   </form>

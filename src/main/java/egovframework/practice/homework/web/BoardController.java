@@ -68,13 +68,27 @@ public class BoardController {
         return "boardPage";
     }
 
-    // 게시글 작성 폼 페이지 호출
+    // 게시글 작성 또는 수정 폼 페이지 호출
     @RequestMapping(value="/boardForm.do", method= RequestMethod.GET)
-    public String goBoardForm(@RequestParam(value="parentBoardIdx", required=false) String parentBoardIdx, Model model) {
-        // 폼에 바인딩할 VO 생성 및 부모 idx 세팅
-        BoardVO boardVO = new BoardVO();
-        boardVO.setParentBoardIdx(parentBoardIdx);
-        model.addAttribute("board", boardVO); // 폼 검증용 바인딩 객체를 추가
+    public String goBoardForm(@RequestParam(value="idx", required = false) String idx,
+                              @RequestParam(value="parentBoardIdx", required=false) String parentBoardIdx,
+                              @RequestParam(value="password", required=false) String password,
+                              Model model) throws Exception {
+        // 폼에 바인딩할 VO 준비
+        BoardVO boardVO;
+        if (idx != null && !idx.isEmpty()) { // 게시글 idx가 있으면 수정 모드 폼
+            // 수정 모드: 비밀번호 검증 후 기존 게시글 불러오기
+            if (password == null || !boardService.checkPassword(idx, password)) {
+                model.addAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
+                return selectBoard(idx, model);  // 상세페이지로 돌아감
+            }
+            boardVO = boardService.selectBoard(idx);
+        } else {
+            // 등록 모드: 새 VO 생성
+            boardVO = new BoardVO();
+            boardVO.setParentBoardIdx(parentBoardIdx);
+        }
+        model.addAttribute("board", boardVO); // 바인딩 객체를 추가
         return "boardFormPage";
     }
 
@@ -135,8 +149,23 @@ public class BoardController {
         // 작성한 글 상세 페이지로 이동
         return "redirect:selectBoard.do?idx=" + newBoardId;
     }
+    
+    // 게시글 수정
+    @RequestMapping(value="/updateBoard.do", method=RequestMethod.POST)
+    public String updateBoard(@ModelAttribute("board") BoardVO boardVO,
+                              BindingResult bindingResult) throws Exception {
+        beanValidator.validate(boardVO, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "boardFormPage";
+        }
+        // update_at 값만 update
+        boardVO.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        log.info("UPDATE 게시글 데이터: {}", boardVO);
+        boardService.updateBoard(boardVO);
+        return "redirect:selectBoard.do?idx=" + boardVO.getIdx();
+    }
 
-    // 삭제 처리
+    // 게시글 삭제
     @RequestMapping(value="/deleteBoard.do", method=RequestMethod.POST)
     public String deleteBoard(@RequestParam("idx") String idx,
                               @RequestParam("password") String password,

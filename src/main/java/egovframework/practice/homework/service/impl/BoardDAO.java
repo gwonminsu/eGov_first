@@ -39,6 +39,11 @@ public class BoardDAO {
         sqlSession.insert("BoardDAO.insertBoard", boardVO);
     }
 
+    // 게시글 수정
+    public void updateBoard(BoardVO boardVO) throws Exception {
+        sqlSession.update("BoardDAO.updateBoard", boardVO);
+    }
+
     // 게시글 하나 조회
     public BoardVO selectBoard(String idx) throws Exception {
         return sqlSession.selectOne("BoardDAO.selectBoard", idx);

@@ -19,6 +19,9 @@ public interface BoardService {
     // 게시글 등록
     void insertBoard(BoardVO boardVO) throws Exception;
 
+    // 게시글 수정
+    void updateBoard(BoardVO boardVO) throws Exception;
+
     // 단일 게시글 조회
     BoardVO selectBoard(String idx) throws Exception;
 

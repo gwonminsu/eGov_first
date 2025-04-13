@@ -35,6 +35,17 @@
         (#{idx}, #{author}, #{parentBoardIdx}, #{title}, #{password}, #{hit}, #{content}, #{createdAt}, #{updatedAt})
     </insert>
 
+    <!-- 게시글 수정 -->
+    <update id="updateBoard" parameterType="egovframework.practice.homework.service.BoardVO">
+        UPDATE board
+        SET title       = #{title},
+            author      = #{author},
+            password    = #{password},
+            content     = #{content},
+            updated_at  = #{updatedAt}
+        WHERE idx = #{idx}
+    </update>
+
     <!-- 단일 게시글 조회 -->
     <select id="selectBoard" parameterType="string" resultType="egovframework.practice.homework.service.BoardVO">
         SELECT * FROM board

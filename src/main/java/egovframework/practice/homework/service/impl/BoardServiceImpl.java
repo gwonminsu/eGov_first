@@ -49,6 +49,12 @@ public class BoardServiceImpl implements BoardService {
         boardDAO.insertBoard(boardVO);
     }
 
+    // 게시글 수정
+    @Override
+    public void updateBoard(BoardVO boardVO) throws Exception {
+        boardDAO.updateBoard(boardVO);
+    }
+
     // 단일 게시글 조회
     @Override
     public BoardVO selectBoard(String idx) throws Exception {
