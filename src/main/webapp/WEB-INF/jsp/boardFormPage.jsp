@@ -74,14 +74,26 @@
                     <input type="submit" value="${not empty board.idx ? '수정하기' : '등록하기'}" />
                     <!-- parentBoardIdx 값에 따라 취소 시 이동 경로 결정 -->
                     <c:choose>
-                      <c:when test="${not empty board.parentBoardIdx}">
-                        <input type="button" value="취소"
-                               onclick="location.href='selectBoard.do?idx=${board.parentBoardIdx}';" />
-                      </c:when>
-                      <c:otherwise>
-                        <input type="button" value="취소"
-                               onclick="location.href='mainBoardList.do';" />
-                      </c:otherwise>
+                        <%-- 수정 모드: idx 가 있으면 본인 상세 페이지로 --%>
+                        <c:when test="${not empty board.idx}">
+                            <input type="button" value="취소"
+                                   onclick="location.href='selectBoard.do?idx=${board.idx}';" />
+                        </c:when>
+                        <%-- 등록 모드 --%>
+                        <c:otherwise>
+                            <c:choose>
+                                <%-- 답글 작성 모드: parentBoardIdx 가 있으면 부모 상세로 --%>
+                                <c:when test="${not empty board.parentBoardIdx}">
+                                    <input type="button" value="취소"
+                                           onclick="location.href='selectBoard.do?idx=${board.parentBoardIdx}';" />
+                                </c:when>
+                                <%-- 원글 작성 모드: parentBoardIdx 없으면 메인 목록으로 --%>
+                                <c:otherwise>
+                                    <input type="button" value="취소"
+                                           onclick="location.href='mainBoardList.do';" />
+                                </c:otherwise>
+                            </c:choose>
+                        </c:otherwise>
                     </c:choose>
                 </td>
             </tr>
