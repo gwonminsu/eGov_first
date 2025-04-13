@@ -237,6 +237,8 @@ public class BoardController {
 
         // 자식을 포함한 게시글 일괄 삭제
         boardService.deleteBoard(idx);
+        // 첨부파일 전체 삭제 (DB 레코드 + 물리 파일)
+//        fileService.deleteAllByBoard(idx);
 
         if (parentIdx != null && !parentIdx.isEmpty()) {
             // 부모가 있는 경우: 부모 상세페이지로

@@ -1,5 +1,6 @@
 package egovframework.practice.homework.service.impl;
 
+import egovframework.practice.homework.service.AttachedFileService;
 import egovframework.practice.homework.service.BoardService;
 import egovframework.practice.homework.service.BoardVO;
 import egovframework.practice.test.service.TestVO;
@@ -16,6 +17,9 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService {
 
     private static final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
+
+    @Resource(name="AttachedFileService")
+    private AttachedFileService fileService;
 
     @Resource(name="boardIdGnrService")
     private EgovIdGnrService idgen;
@@ -94,11 +98,13 @@ public class BoardServiceImpl implements BoardService {
         // 2) 답글들 한 번에 삭제
         for (BoardVO r : replies) {
             boardDAO.deleteBoard(r.getIdx());
+            fileService.deleteAllByBoard(r.getIdx()); // 자식의 첨부파일도 모두 삭제
             log.info("DELETE 추가 삭제된 자식 게시글 idx: {}", r.getIdx());
         }
         // 4) 원글 삭제
         BoardVO deletedBoard = boardDAO.selectBoard(idx);
         boardDAO.deleteBoard(idx);
+        fileService.deleteAllByBoard(idx);
         log.info("DELETE 삭제된 게시글 데이터: {}", deletedBoard);
     }
 

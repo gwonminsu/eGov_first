@@ -73,7 +73,7 @@
             <tr>
                 <th>첨부파일</th>
                 <td>
-                    <input type="file" name="files" multiple/>
+                    <input type="file" name="files" multiple="multiple"/>
                 </td>
             </tr>
 
