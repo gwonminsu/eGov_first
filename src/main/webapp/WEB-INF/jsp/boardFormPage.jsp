@@ -31,7 +31,7 @@
     </c:if>
 
     <!-- form의 action을 BoardController의 insert 또는 update 처리 경로로 설정 -->
-    <form:form action="${not empty board.idx ? 'updateBoard.do' : 'insertBoard.do'}" modelAttribute="board" method="post">
+    <form:form action="${not empty board.idx ? 'updateBoard.do' : 'insertBoard.do'}" modelAttribute="board" method="post" enctype="multipart/form-data">
         <%-- 수정용 보드 폼을 위한 필드 --%>
         <c:if test="${not empty board.idx}">
             <form:hidden path="idx"/>
@@ -69,6 +69,28 @@
                     <form:errors path="content" cssClass="error" />
                 </td>
             </tr>
+            <!-- 파일 업로드 -->
+            <tr>
+                <th>첨부파일</th>
+                <td>
+                    <input type="file" name="files" multiple/>
+                </td>
+            </tr>
+
+            <!-- 수정 모드: 기존 첨부파일 목록 + 삭제체크박스 -->
+            <c:if test="${not empty board.idx}">
+                <tr>
+                    <th>기존 파일</th>
+                    <td>
+                        <c:forEach var="f" items="${fileList}">
+                            <input type="checkbox" name="deleteFileIdx" value="${f.idx}"/> 삭제
+                            <a href="downloadFile.do?idx=${f.idx}">${f.fileName}</a>
+                            (${f.fileSize} bytes)<br/>
+                        </c:forEach>
+                    </td>
+                </tr>
+            </c:if>
+
             <tr>
                 <td colspan="2" style="text-align:center;">
                     <input type="submit" value="${not empty board.idx ? '수정하기' : '등록하기'}" />

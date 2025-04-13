@@ -3,6 +3,7 @@ package egovframework.practice.homework.service.impl;
 import egovframework.practice.homework.service.BoardService;
 import egovframework.practice.homework.service.BoardVO;
 import egovframework.practice.test.service.TestVO;
+import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService {
 
     private static final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
+
+    @Resource(name="boardIdGnrService")
+    private EgovIdGnrService idgen;
 
     @Resource(name = "BoardDAO")
     protected BoardDAO boardDAO;
@@ -46,6 +50,9 @@ public class BoardServiceImpl implements BoardService {
     // 게시글 등록
     @Override
     public void insertBoard(BoardVO boardVO) throws Exception {
+        // idgen을 사용하여 게시글 PK 자동 생성
+        String newBoardId = idgen.getNextStringId();  // idgen 서비스에서 새 ID 생성
+        boardVO.setIdx(newBoardId); // 생성된 id를 Board VO에 설정
         boardDAO.insertBoard(boardVO);
     }
 

@@ -13,13 +13,6 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
     </context:component-scan>
 
-<!-- 커스텀으로 검증하기 위해 주석처리 -->
-<!--    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
-<!--        <property name="webBindingInitializer">-->
-<!--            <bean class="egovframework.practice.cmmn.web.EgovBindingInitializer"/>-->
-<!--        </property>-->
-<!--    </bean>-->
-
     <!-- Spring MVC 검증 활성화 -->
     <mvc:annotation-driven validator="beanValidator"/>
 
@@ -30,7 +23,12 @@
             </list>
         </property>
     </bean>
-    
+
+    <!-- 멀티파트 리졸버 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
+
+
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
     <!-- 쿠키를 이용한 Locale 이용시 <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/> -->
     <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">

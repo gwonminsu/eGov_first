@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AttachedFileDAO">
+    <!-- 첨부파일 등록 -->
+    <insert id="insert" parameterType="egovframework.practice.homework.service.AttachedFileVO">
+        INSERT INTO attachedFile
+            (idx, board_idx, file_name, file_uuid, file_path, file_size)
+        VALUES
+            (#{idx}, #{boardIdx}, #{fileName}, #{fileUuid}, #{filePath}, #{fileSize})
+    </insert>
+
+    <!-- 게시물 첨부파일 목록 가져오기 -->
+    <select id="selectByBoard" parameterType="string" resultType="egovframework.practice.homework.service.AttachedFileVO">
+        SELECT * FROM attachedFile WHERE board_idx = #{boardIdx} ORDER BY created_at
+    </select>
+
+    <!-- 파일 단건 조회 -->
+    <select id="selectFileByIdx" parameterType="string" resultType="egovframework.practice.homework.service.AttachedFileVO">
+        SELECT * FROM attachedFile
+        WHERE idx = #{fileIdx}
+    </select>
+
+    <!-- 첨부파일 idx로 삭제 -->
+    <delete id="deleteByIdx" parameterType="string">
+        DELETE FROM attachedFile WHERE idx = #{idx}
+    </delete>
+
+    <!-- 게시물에 등록된 첨부파일 모두 삭제 -->
+    <delete id="deleteByBoard" parameterType="string">
+        DELETE FROM attachedFile WHERE board_idx = #{boardIdx}
+    </delete>
+
+</mapper>

@@ -36,6 +36,16 @@
     <div>${board.content}</div>
     <hr/>
 
+    <h3>첨부파일</h3>
+    <ul>
+        <c:forEach var="f" items="${fileList}">
+            <li>
+                <a href="downloadFile.do?idx=${f.idx}">${f.fileName}</a>
+                (${f.fileSize} bytes)
+            </li>
+        </c:forEach>
+    </ul>
+
   <!-- 버튼 그룹 -->
   <c:choose>
     <%-- level 0: 원글 → 목록 --%>

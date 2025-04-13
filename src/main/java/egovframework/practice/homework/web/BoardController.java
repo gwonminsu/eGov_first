@@ -1,5 +1,7 @@
 package egovframework.practice.homework.web;
 
+import egovframework.practice.homework.service.AttachedFileService;
+import egovframework.practice.homework.service.AttachedFileVO;
 import egovframework.practice.homework.service.BoardService;
 import egovframework.practice.homework.service.BoardVO;
 import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
@@ -14,9 +16,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -26,13 +36,12 @@ public class BoardController {
 
     private static final Logger log = LoggerFactory.getLogger(BoardController.class);
 
-    @Resource(name="boardIdGnrService")
-    private EgovIdGnrService idgen;
-
     @Resource(name = "BoardService")
     protected BoardService boardService;
 
-    /** EgovPropertyService */
+    @Resource(name="AttachedFileService")
+    private AttachedFileService fileService;
+
 //    @Resource(name = "propertiesService")
 //    protected EgovPropertyService propertiesService;
 
@@ -102,6 +111,9 @@ public class BoardController {
         BoardVO board = boardService.selectBoard(idx);
         int level = 0;
         String parentIdx = board.getParentBoardIdx();
+        // 첨부파일 목록 조회
+        List<AttachedFileVO> files = fileService.getFiles(idx);
+        model.addAttribute("fileList", files);
         // 부모 글 가져오기
         BoardVO parent = boardService.selectBoard(parentIdx);
         if (parentIdx != null && !parentIdx.isEmpty()) {
@@ -123,13 +135,48 @@ public class BoardController {
         return "boardDetailPage";
     }
 
+    // 상세페이지에서 파일 다운로드
+    @RequestMapping("/downloadFile.do")
+    public void downloadFile(@RequestParam("fileIdx") String fileIdx,
+                             HttpServletResponse response) throws Exception {
+        // 1) 서비스에서 VO를 꺼낸다
+        AttachedFileVO fileVO = fileService.getFileByIdx(fileIdx);
+        if (fileVO == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // 2) VO에서 필요한 값 꺼내기
+        String storedFileName = fileVO.getFileUuid();   // 실제 저장된 파일명
+        String originalFileName = fileVO.getFileName(); // 사용자에게 보여줄 원본 파일명
+        String fullPath = fileVO.getFilePath() + File.separator + storedFileName;
+
+        // 3) 파일 읽어서 response로 스트리밍
+        File file = new File(fullPath);
+        if (!file.exists()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + URLEncoder.encode(originalFileName, "UTF-8") + "\"");
+        try (InputStream in = new FileInputStream(file);
+             OutputStream out = response.getOutputStream()) {
+            byte[] buffer = new byte[4096];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                out.write(buffer, 0, len);
+            }
+        }
+    }
+
+
     // 게시글 등록
     @RequestMapping(value="/insertBoard.do", method=RequestMethod.POST)
-    public String insertBoard(@ModelAttribute("board") BoardVO boardVO, BindingResult bindingResult, Model model) throws Exception {
-        // idgen을 사용하여 게시글 PK 자동 생성
-        String newBoardId = idgen.getNextStringId();  // idgen 서비스에서 새 ID 생성
-        boardVO.setIdx(newBoardId); // 생성된 id를 Board VO에 설정
-
+    public String insertBoard(@ModelAttribute("board") BoardVO boardVO,
+                              BindingResult bindingResult,
+                              @RequestParam("files") MultipartFile[] files,
+                              Model model) throws Exception {
         // 서버에서 폼 검증
         beanValidator.validate(boardVO, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -143,17 +190,20 @@ public class BoardController {
         boardVO.setUpdatedAt(now);  // updated_at 값 설정
 
         boardService.insertBoard(boardVO);
+        fileService.saveFiles(boardVO.getIdx(), files);
 
         log.info("INSERT 게시글 데이터: {}", boardVO);
 
         // 작성한 글 상세 페이지로 이동
-        return "redirect:selectBoard.do?idx=" + newBoardId;
+        return "redirect:selectBoard.do?idx=" + boardVO.getIdx();
     }
     
     // 게시글 수정
     @RequestMapping(value="/updateBoard.do", method=RequestMethod.POST)
     public String updateBoard(@ModelAttribute("board") BoardVO boardVO,
-                              BindingResult bindingResult) throws Exception {
+                              BindingResult bindingResult,
+                              @RequestParam(value="files", required=false) MultipartFile[] files,
+                              @RequestParam(value="deleteFileIdx", required=false) String[] deleteFileIdx) throws Exception {
         beanValidator.validate(boardVO, bindingResult);
         if (bindingResult.hasErrors()) {
             return "boardFormPage";
@@ -162,6 +212,11 @@ public class BoardController {
         boardVO.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         log.info("UPDATE 게시글 데이터: {}", boardVO);
         boardService.updateBoard(boardVO);
+        // 삭제 체크된 파일들 삭제
+        fileService.deleteFiles(deleteFileIdx);
+        // 새로 업로드된 파일들 저장
+        fileService.saveFiles(boardVO.getIdx(), files);
+
         return "redirect:selectBoard.do?idx=" + boardVO.getIdx();
     }
 
