@@ -15,7 +15,7 @@
       .errorSummary { border:1px solid red; padding:10px; margin-bottom:15px; }
     </style>
     <!-- jquery 사용 -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
 </head>
 <body>
     <h2>
@@ -157,7 +157,9 @@
                         .text(file.name + ' [' + file.size + ' bytes] ');
                     const $btn = $('<button type="button">X</button>')
                         .on('click', function(){
-                            removeNewFile(file);
+                            if (confirm('삭제 하시겠습니까?')) { // 삭제 전 확인
+                                removeNewFile(file);
+                            }
                         });
                     $li.append($btn).appendTo('#fileList');
                 });
@@ -186,6 +188,10 @@
 
             // 기존 첨부파일 삭제 처리 (전역 함수)
             window.removeExistingFile = function(idx) {
+                // 삭제 전 확인
+                if (!confirm('삭제 하시겠습니까?')) {
+                    return;
+                }
                 // 화면에서 해당 <li> 제거
                 $('#fileList').find('li[data-idx="' + idx + '"]').remove();
                 // 숨은 삭제 파라미터 추가 (폼 전송 시 deleteFileIdx로 넘어감)
