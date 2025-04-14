@@ -56,13 +56,22 @@
                 <!-- 원글일 경우 -->
                 <c:url var="detailUrl" value="/board/selectBoard.do">
                     <c:param name="idx" value="${item.idx}" />
+                    <!-- 검색 파라미터가 있으면 selectBoard.do에 검색 파라미터를 더해서 전달(목록버튼으로 다시 돌아가기 위함) -->
+                    <c:if test="${not empty param.searchType}">
+                        <c:param name="searchType" value="${param.searchType}" />
+                    </c:if>
+                    <c:if test="${not empty param.keyword}">
+                        <c:param name="keyword"    value="${param.keyword}"    />
+                    </c:if>
                 </c:url>
+
                 <!-- 답글일 경우에만 parentUrl 생성 -->
                 <c:if test="${not empty item.parentBoardIdx}">
                     <c:url var="parentUrl" value="/board/selectBoard.do">
                         <c:param name="idx" value="${item.parentBoardIdx}" />
                     </c:url>
                 </c:if>
+
                 <td>
                     <!-- 답글이면 추가 -->
                     <c:if test="${not empty item.parentBoardIdx}">

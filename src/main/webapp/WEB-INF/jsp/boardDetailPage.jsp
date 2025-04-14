@@ -53,11 +53,20 @@
     <c:choose>
         <%-- level 0: 원글 → 목록 --%>
         <c:when test="${board.level == 0}">
-            <c:url var="mainListUrl" value="mainBoardList.do"/>
+            <%-- 기본 목록 URL --%>
+            <c:url var="mainListUrl" value="/board/mainBoardList.do" />
+            <%-- hidden input으로 검색 파라미터 유지 --%>
             <form action="${mainListUrl}" method="get" style="display:inline;">
+                <c:if test="${not empty param.searchType}">
+                    <input type="hidden" name="searchType" value="${param.searchType}" />
+                </c:if>
+                <c:if test="${not empty param.keyword}">
+                    <input type="hidden" name="keyword"    value="${param.keyword}"    />
+                </c:if>
                 <button type="submit">목록</button>
             </form>
         </c:when>
+
         <%-- level 1 or 2: 답글/답글의답글 → 이전(부모 상세) --%>
         <c:otherwise>
             <c:url var="prevUrl" value="selectBoard.do">
