@@ -71,6 +71,7 @@
                     <form:errors path="content" cssClass="error" />
                 </td>
             </tr>
+
             <!-- 파일 업로드 -->
             <tr>
                 <th>첨부파일</th>
@@ -79,22 +80,21 @@
                 </td>
             </tr>
 
-            <!-- 수정 모드: 기존 첨부파일 목록 -->
-            <c:if test="${not empty fileList}">
-                <ul id="existingFileList">
-                    <c:forEach var="file" items="${fileList}">
-                        <li data-idx="${file.idx}">
-                            ${file.fileName} [${file.fileSize} bytes]
-                            <button type="button" onclick="removeExistingFile('${file.idx}')">X</button>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:if>
-
-            <!-- 새로 선택된 파일 리스트 -->
             <tr>
                 <td colspan="2">
-                    <ul id="newFileList"></ul>
+                    <ul id="fileList">
+                        <!-- 기존 첨부파일 렌더링 -->
+                        <c:if test="${not empty fileList}">
+                            <c:forEach var="file" items="${fileList}">
+                                <li data-idx="${file.idx}">
+                                    ${file.fileName} [${file.fileSize} bytes]
+                                    <button type="button"
+                                            onclick="removeExistingFile('${file.idx}')">X</button>
+                                </li>
+                            </c:forEach>
+                        </c:if>
+                        <!-- 신규 파일은 아래 JS에서 <li class="new">로 append -->
+                    </ul>
                 </td>
             </tr>
 
@@ -144,7 +144,7 @@
             // 파일 인풋 변경 이벤트 (jQuery)
             $('#fileInput').on('change', function(){
                 dt = new DataTransfer(); // 이전 파일 목록 초기화
-                $('#newFileList').empty(); // 화면에 뿌린 리스트 초기화
+                $('#fileList li.new').remove(); // 신규 파일 항목만 삭제
 
                 // input.files → DataTransfer로 복사
                 $.each(this.files, function(i, file){
@@ -153,13 +153,13 @@
 
                 // DataTransfer.files → 화면에 <li>로 표시
                 $.each(dt.files, function(i, file){
-                    const $li = $('<li>')
+                    const $li = $('<li class="new">')
                         .text(file.name + ' [' + file.size + ' bytes] ');
                     const $btn = $('<button type="button">X</button>')
                         .on('click', function(){
                             removeNewFile(file);
                         });
-                    $li.append($btn).appendTo('#newFileList');
+                    $li.append($btn).appendTo('#fileList');
                 });
 
                 // input.files 갱신
@@ -187,7 +187,7 @@
             // 기존 첨부파일 삭제 처리 (전역 함수)
             window.removeExistingFile = function(idx) {
                 // 화면에서 해당 <li> 제거
-                $('#existingFileList').find('li[data-idx="' + idx + '"]').remove();
+                $('#fileList').find('li[data-idx="' + idx + '"]').remove();
                 // 숨은 삭제 파라미터 추가 (폼 전송 시 deleteFileIdx로 넘어감)
                 $('<input>')
                     .attr({ type: 'hidden', name: 'deleteFileIdx', value: idx })
@@ -199,16 +199,15 @@
 
             // 로그 출력 함수
             function printStateLog() {
-                console.log('▶ Existing files:',
-                    $('#existingFileList li').map(function(){
+                console.log('▶ 현재 파일 목록:',
+                    $('#fileList li').map(function(){
                         // data-idx와 텍스트(파일명)만 추출
-                        return $(this).data('idx') + ':' + $(this).text().trim().split(' [')[0];
+                        const idx = $(this).data('idx') || 'new';
+                        const name = $(this).text().trim().split(' [')[0];
+                        return idx + ':' + name;
                     }).get()
                 );
-                console.log('▶ New files:',
-                    Array.from(dt.files).map(f => f.name)
-                );
-                console.log('▶ To delete:',
+                console.log('▶ 삭제 예정 파일 idx:',
                     $('#deleteInputs input[name="deleteFileIdx"]').map(function(){
                         return $(this).val();
                     }).get()
