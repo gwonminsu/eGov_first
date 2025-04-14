@@ -14,6 +14,8 @@
       .error { color: red; }
       .errorSummary { border:1px solid red; padding:10px; margin-bottom:15px; }
     </style>
+    <!-- jquery 사용 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <h2>
@@ -73,23 +75,36 @@
             <tr>
                 <th>첨부파일</th>
                 <td>
-                    <input type="file" name="files" multiple="multiple"/>
+                    <input type="file" id="fileInput" name="files" multiple="multiple"/>
                 </td>
             </tr>
 
-            <!-- 수정 모드: 기존 첨부파일 목록 + 삭제체크박스 -->
-            <c:if test="${not empty board.idx}">
-                <tr>
-                    <th>기존 파일</th>
-                    <td>
-                        <c:forEach var="f" items="${fileList}">
-                            <input type="checkbox" name="deleteFileIdx" value="${f.idx}"/> 삭제
-                            <a href="downloadFile.do?idx=${f.idx}">${f.fileName}</a>
-                            (${f.fileSize} bytes)<br/>
-                        </c:forEach>
-                    </td>
-                </tr>
+            <!-- 수정 모드: 기존 첨부파일 목록 -->
+            <c:if test="${not empty fileList}">
+                <div>기존 첨부파일:</div>
+                <ul id="existingFileList">
+                    <c:forEach var="file" items="${fileList}">
+                        <li data-idx="${file.idx}">
+                            ${file.fileName} [${file.fileSize} bytes]
+                            <button type="button" onclick="removeExistingFile('${file.idx}')">X</button>
+                        </li>
+                    </c:forEach>
+                </ul>
             </c:if>
+
+            <!-- 새로 선택된 파일 리스트 -->
+            <tr>
+                <td colspan="2">
+                    <ul id="newFileList"></ul>
+                </td>
+            </tr>
+
+            <!-- 서버에 보낼 삭제 대상 파일 idx (hidden inputs) -->
+            <tr style="display:none;">
+              <td colspan="2">
+                <div id="deleteInputs"></div>
+              </td>
+            </tr>
 
             <tr>
                 <td colspan="2" style="text-align:center;">
@@ -121,5 +136,59 @@
             </tr>
         </table>
     </form:form>
+
+    <script>
+        $(function(){
+            // 선택된 파일을 메모리에서 관리
+            let dt = new DataTransfer();
+
+            // 파일 인풋 변경 이벤트 (jQuery)
+            $('#fileInput').on('change', function(){
+                dt = new DataTransfer(); // 이전 파일 목록 초기화
+                $('#newFileList').empty(); // 화면에 뿌린 리스트 초기화
+
+                // input.files → DataTransfer로 복사
+                $.each(this.files, function(i, file){
+                    dt.items.add(file);
+                });
+
+                // DataTransfer.files → 화면에 <li>로 표시
+                $.each(dt.files, function(i, file){
+                    const $li = $('<li>')
+                        .text(file.name + ' [' + file.size + ' bytes] ');
+                    const $btn = $('<button type="button">X</button>')
+                        .on('click', function(){
+                            removeNewFile(file);
+                        });
+                    $li.append($btn).appendTo('#newFileList');
+                });
+
+                // input.files 갱신
+                this.files = dt.files;
+            });
+
+            // 새로 선택된 파일 삭제 함수
+            function removeNewFile(targetFile) {
+                for (let i = 0; i < dt.items.length; i++) {
+                    if (dt.items[i].getAsFile() === targetFile) {
+                        dt.items.remove(i);
+                        break;
+                    }
+                }
+                $('#fileInput')[0].files = dt.files;
+                $('#fileInput').trigger('change');  // 리스트 다시 그리기
+            }
+
+            // 기존 첨부파일 삭제 처리 (전역 함수)
+            window.removeExistingFile = function(idx) {
+                // 화면에서 해당 <li> 제거
+                $('#existingFileList').find('li[data-idx="' + idx + '"]').remove();
+                // 숨은 삭제 파라미터 추가 (폼 전송 시 deleteFileIdx로 넘어감)
+                $('<input>')
+                    .attr({ type: 'hidden', name: 'deleteFileIdx', value: idx })
+                    .appendTo('#deleteInputs');
+            };
+        });
+    </script>
 </body>
 </html>

@@ -48,7 +48,7 @@ public class AttachedFileServiceImpl implements AttachedFileService {
             String ext = origName.substring(origName.lastIndexOf('.')); // 확장자
             String savedName = uuid + ext; // uuid로 새로운 파일 이름 생성
             File dest = new File(uploadDir, savedName); // 새로운 이름으로 업로드 경로에 파일 생성
-            mf.transferTo(dest); // 저장할 파일 객체
+            mf.transferTo(dest); // 지정한 경로로 파일 객체(mf) 저장
 
             AttachedFileVO vo = new AttachedFileVO();
             vo.setIdx(idx);
@@ -58,6 +58,7 @@ public class AttachedFileServiceImpl implements AttachedFileService {
             vo.setFilePath(uploadDir.getAbsolutePath());
             vo.setFileSize(mf.getSize());
             vo.setExt(ext);
+            log.info("INSERT " + origName + "를 저장소에 " + uuid + ext + "로 저장");
             dao.insert(vo); // 첨부파일 테이블에 추가
         }
     }
