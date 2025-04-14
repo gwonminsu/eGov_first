@@ -16,7 +16,8 @@
 <body>
     <h2>게시글 목록</h2>
     <p>전체: <span class="count-red"><fmt:formatNumber value="${totalCount}" type="number" groupingUsed="true"/></span>건</p>
-    <button type="button" onclick="location.href='boardForm.do'">글쓰기</button>
+    <c:url var="newBoardFormUrl" value="boardForm.do" />
+    <button type="button" onclick="location.href='${newBoardFormUrl}';">글쓰기</button>
     <table border="1">
         <tr>
             <th>Idx</th>
@@ -36,7 +37,7 @@
                 <td>${item.author}</td>
                 <td>${item.parentBoardIdx}</td>
                 <td>
-                    <a href="selectBoard.do?idx=${item.idx}">
+                    <a href="<c:url value='/board/selectBoard.do?idx=${item.idx}' />">
                         ${item.title}
                     </a>
                 </td>

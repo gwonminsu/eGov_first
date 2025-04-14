@@ -39,66 +39,79 @@
     <h3>첨부파일</h3>
     <ul>
         <c:forEach var="f" items="${fileList}">
+            <c:url var="downloadUrl" value="downloadFile.do">
+                <c:param name="fileIdx" value="${f.idx}" />
+            </c:url>
             <li>
-                <a href="downloadFile.do?fileIdx=${f.idx}">${f.fileName}</a>
+                <a href="${downloadUrl}">${f.fileName}</a>
                 (${f.fileSize} bytes)
             </li>
         </c:forEach>
     </ul>
 
-  <!-- 버튼 그룹 -->
-  <c:choose>
-    <%-- level 0: 원글 → 목록 --%>
-    <c:when test="${board.level == 0}">
-      <form action="mainBoardList.do" method="get" style="display:inline;">
-        <button type="submit">목록</button>
-      </form>
-    </c:when>
-    <%-- level 1 or 2: 답글/답글의답글 → 이전(부모 상세) --%>
-    <c:otherwise>
-      <form action="selectBoard.do" method="get" style="display:inline;">
-        <input type="hidden" name="idx" value="${board.parentBoardIdx}" />
-        <button type="submit">이전</button>
-      </form>
-    </c:otherwise>
-  </c:choose>
-
-  <form id="pwForm" method="post" style="display:inline;">
-    <input type="hidden" name="idx" value="${board.idx}" />
-    비밀번호: <input type="password" name="password" />
-
-    <button type="submit" formaction="boardForm.do" formmethod="get">
-      수정
-    </button>
-    <button type="submit" formaction="deleteBoard.do" formmethod="post">
-      삭제
-    </button>
-  </form>
-
-  <c:choose>
-      <%-- 원글 또는 첫 답글(level=1)일 때만 활성화 --%>
-      <c:when test="${board.level < 2}">
-        <form action="boardForm.do" method="get" style="display:inline;">
-          <input type="hidden" name="parentBoardIdx" value="${board.idx}"/>
-          <button type="submit">답변등록</button>
-        </form>
-        <h3>답글 목록</h3>
-      </c:when>
-      <%-- 답글의 답글(level>=2)일 때는 비활성화 --%>
-      <c:otherwise>
-        <button type="button" disabled style="display:inline;" title="더 이상 답변을 달 수 없습니다">
-          답변등록
-        </button>
-      </c:otherwise>
+    <!-- 버튼 그룹 -->
+    <c:choose>
+        <%-- level 0: 원글 → 목록 --%>
+        <c:when test="${board.level == 0}">
+            <c:url var="mainListUrl" value="mainBoardList.do"/>
+            <form action="${mainListUrl}" method="get" style="display:inline;">
+                <button type="submit">목록</button>
+            </form>
+        </c:when>
+        <%-- level 1 or 2: 답글/답글의답글 → 이전(부모 상세) --%>
+        <c:otherwise>
+            <c:url var="prevUrl" value="selectBoard.do">
+                <c:param name="idx" value="${board.parentBoardIdx}" />
+            </c:url>
+            <form action="${prevUrl}" method="get" style="display:inline;">
+                <input type="hidden" name="idx" value="${board.parentBoardIdx}" />
+                <button type="submit">이전</button>
+            </form>
+        </c:otherwise>
     </c:choose>
 
-  <ul>
-    <c:forEach var="reply" items="${replyList}">
-      <li style="margin-left:${reply.level * 20}px;">
-        <a href="selectBoard.do?idx=${reply.idx}">${reply.title}</a>
-        <small>by ${reply.author}</small>
-      </li>
-    </c:forEach>
-  </ul>
+    <form id="pwForm" method="post" style="display:inline;">
+        <input type="hidden" name="idx" value="${board.idx}" />
+        비밀번호: <input type="password" name="password" />
+
+        <c:url var="editFormUrl" value="boardForm.do"/>
+        <button type="submit" formaction="${editFormUrl}" formmethod="get">
+          수정
+        </button>
+        <c:url var="deleteUrl" value="deleteBoard.do"/>
+        <button type="submit" formaction="${deleteUrl}" formmethod="post">
+          삭제
+        </button>
+    </form>
+
+    <c:choose>
+        <%-- 원글 또는 첫 답글(level=1)일 때만 활성화 --%>
+        <c:when test="${board.level < 2}">
+            <c:url var="replyUrl" value="boardForm.do"/>
+            <form action="${replyUrl}" method="get" style="display:inline;">
+                <input type="hidden" name="parentBoardIdx" value="${board.idx}"/>
+                <button type="submit">답변등록</button>
+            </form>
+            <h3>답글 목록</h3>
+        </c:when>
+        <%-- 답글의 답글(level>=2)일 때는 비활성화 --%>
+        <c:otherwise>
+            <button type="button" disabled style="display:inline;" title="더 이상 답변을 달 수 없습니다">
+            답변등록
+            </button>
+        </c:otherwise>
+    </c:choose>
+
+    <ul>
+        <c:forEach var="reply" items="${replyList}">
+            <c:url var="replyUrl" value="selectBoard.do">
+                <c:param name="idx" value="${reply.idx}" />
+            </c:url>
+            <li style="margin-left:${reply.level * 20}px;">
+                <a href="${replyUrl}">${reply.title}</a>
+                <small>by ${reply.author}</small>
+            </li>
+        </c:forEach>
+    </ul>
 </body>
 </html>

@@ -32,8 +32,17 @@
         </div>
     </c:if>
 
-    <!-- form의 action을 BoardController의 insert 또는 update 처리 경로로 설정 -->
-    <form:form action="${not empty board.idx ? 'updateBoard.do' : 'insertBoard.do'}" modelAttribute="board" method="post" enctype="multipart/form-data">
+    <!-- form에 게시물 idx가 있으면 update 아니면 insert -->
+    <c:choose>
+        <c:when test="${not empty board.idx}">
+            <c:url var="formAction" value="updateBoard.do"/>
+        </c:when>
+        <c:otherwise>
+            <c:url var="formAction" value="insertBoard.do"/>
+        </c:otherwise>
+    </c:choose>
+
+    <form:form action="${formAction}" modelAttribute="board" method="post" enctype="multipart/form-data">
         <%-- 수정용 보드 폼을 위한 필드 --%>
         <c:if test="${not empty board.idx}">
             <form:hidden path="idx"/>
@@ -112,21 +121,25 @@
                     <c:choose>
                         <%-- 수정 모드: idx 가 있으면 본인 상세 페이지로 --%>
                         <c:when test="${not empty board.idx}">
-                            <input type="button" value="취소"
-                                   onclick="location.href='selectBoard.do?idx=${board.idx}';" />
+                            <c:url var="cancelDetailUrl" value="selectBoard.do">
+                              <c:param name="idx" value="${board.idx}"/>
+                            </c:url>
+                            <input type="button" value="취소" onclick="location.href='${cancelDetailUrl}';" />
                         </c:when>
                         <%-- 등록 모드 --%>
                         <c:otherwise>
                             <c:choose>
                                 <%-- 답글 작성 모드: parentBoardIdx 가 있으면 부모 상세로 --%>
                                 <c:when test="${not empty board.parentBoardIdx}">
-                                    <input type="button" value="취소"
-                                           onclick="location.href='selectBoard.do?idx=${board.parentBoardIdx}';" />
+                                    <c:url var="cancelParentUrl" value="selectBoard.do">
+                                      <c:param name="idx" value="${board.parentBoardIdx}"/>
+                                    </c:url>
+                                    <input type="button" value="취소" onclick="location.href='${cancelParentUrl}';" />
                                 </c:when>
                                 <%-- 원글 작성 모드: parentBoardIdx 없으면 메인 목록으로 --%>
                                 <c:otherwise>
-                                    <input type="button" value="취소"
-                                           onclick="location.href='mainBoardList.do';" />
+                                    <c:url var="cancelMainUrl" value="mainBoardList.do"/>
+                                    <input type="button" value="취소" onclick="location.href='${cancelMainUrl}';" />
                                 </c:otherwise>
                             </c:choose>
                         </c:otherwise>
