@@ -16,6 +16,12 @@ public interface BoardService {
     // 전체 원글 개수 조회
     int getMainBoardCount() throws Exception;
 
+    // 검색된 게시글 목록 조회
+    List<BoardVO> selectSearchBoardList(String searchType, String keyword) throws Exception;
+
+    // 검색된 게시글 개수 조회
+    int selectSearchBoardCount(String searchType, String keyword) throws Exception;
+
     // 게시글 등록
     void insertBoard(BoardVO boardVO) throws Exception;
 

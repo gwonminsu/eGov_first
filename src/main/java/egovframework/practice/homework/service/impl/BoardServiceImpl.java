@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("BoardService")
 public class BoardServiceImpl implements BoardService {
@@ -49,6 +51,24 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public int getMainBoardCount() throws Exception {
         return boardDAO.selectMainBoardCount();
+    }
+
+    // 검색된 게시글 목록 조회
+    @Override
+    public List<BoardVO> selectSearchBoardList(String searchType, String keyword) throws Exception {
+        Map<String,String> params = new HashMap<>();
+        params.put("searchType", searchType);
+        params.put("keyword", keyword);
+        return boardDAO.selectSearchBoardList(params);
+    }
+
+    // 검색된 게시글 개수 조회
+    @Override
+    public int selectSearchBoardCount(String searchType, String keyword) throws Exception {
+        Map<String,String> params = new HashMap<>();
+        params.put("searchType", searchType);
+        params.put("keyword", keyword);
+        return boardDAO.selectSearchBoardCount(params);
     }
 
     // 게시글 등록

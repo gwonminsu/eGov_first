@@ -65,15 +65,29 @@ public class BoardController {
 
     // 메인(원글) 목록
     @RequestMapping("/mainBoardList.do")
-    public String selectMainBoardList(Model model) throws Exception {
-        // 글 목록
-        List<BoardVO> list = boardService.getMainBoardList();
-        log.info("SELECT 원글 목록 데이터: {}", list);
-        model.addAttribute("boardList", list);
-        // 전체 원글 개수
-        int totalCount = boardService.getMainBoardCount();
-        log.info("전체 원글 개수: {}", totalCount);
+    public String selectMainBoardList(@RequestParam(value="searchType", required = false) String searchType,
+                                      @RequestParam(value="keyword", required = false) String keyword,
+                                      Model model) throws Exception {
+
+        List<BoardVO> list; // 바인딩할 게시물 객체
+        int totalCount; // 바인딩할 게시물 개수
+        if (searchType != null && keyword != null && !keyword.trim().isEmpty()) {
+            list = boardService.selectSearchBoardList(searchType, keyword);
+            totalCount = boardService.selectSearchBoardCount(searchType, keyword);
+            log.info("SELECT" + searchType + "(이)가 " + keyword + "(으)로 검색된 게시글 목록 데이터:" + list);
+            log.info("검색된 게시글 개수: {}", totalCount);
+        } else {
+            list = boardService.getMainBoardList();
+            totalCount = boardService.getMainBoardCount();
+            log.info("SELECT 원글 목록 데이터: {}", list);
+            log.info("전체 원글 개수: {}", totalCount);
+        }
+
+        model.addAttribute("boardList",  list);
         model.addAttribute("totalCount", totalCount);
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("keyword",    keyword);
+
         return "boardPage";
     }
 

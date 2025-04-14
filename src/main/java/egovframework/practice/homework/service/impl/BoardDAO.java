@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Repository("BoardDAO")
 public class BoardDAO {
@@ -31,6 +32,16 @@ public class BoardDAO {
     // 전체 원글 개수 조회
     public int selectMainBoardCount() throws Exception {
         return sqlSession.selectOne("BoardDAO.selectMainBoardCount");
+    }
+
+    // 검색된 게시글 목록 조회
+    public List<BoardVO> selectSearchBoardList(Map<String, String> params) throws Exception {
+        return sqlSession.selectList("BoardDAO.selectSearchBoardList", params);
+    }
+
+    // 검색된 게시글 개수 조회
+    public int selectSearchBoardCount(Map<String, String> params) throws Exception {
+        return sqlSession.selectOne("BoardDAO.selectSearchBoardCount", params);
     }
 
     // 게시글 등록
