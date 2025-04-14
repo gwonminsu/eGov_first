@@ -81,7 +81,6 @@
 
             <!-- 수정 모드: 기존 첨부파일 목록 -->
             <c:if test="${not empty fileList}">
-                <div>기존 첨부파일:</div>
                 <ul id="existingFileList">
                     <c:forEach var="file" items="${fileList}">
                         <li data-idx="${file.idx}">
@@ -140,7 +139,7 @@
     <script>
         $(function(){
             // 선택된 파일을 메모리에서 관리
-            let dt = new DataTransfer();
+            var dt = new DataTransfer();
 
             // 파일 인풋 변경 이벤트 (jQuery)
             $('#fileInput').on('change', function(){
@@ -165,6 +164,9 @@
 
                 // input.files 갱신
                 this.files = dt.files;
+
+                console.log('=== 파일 선택 후 상태 ===');
+                printStateLog();
             });
 
             // 새로 선택된 파일 삭제 함수
@@ -177,6 +179,9 @@
                 }
                 $('#fileInput')[0].files = dt.files;
                 $('#fileInput').trigger('change');  // 리스트 다시 그리기
+
+                console.log('=== 새로운 파일 삭제 후 상태 ===');
+                printStateLog();
             }
 
             // 기존 첨부파일 삭제 처리 (전역 함수)
@@ -187,7 +192,28 @@
                 $('<input>')
                     .attr({ type: 'hidden', name: 'deleteFileIdx', value: idx })
                     .appendTo('#deleteInputs');
+
+                console.log('=== 기존 파일에서 삭제 후 상태 ===');
+                printStateLog();
             };
+
+            // 로그 출력 함수
+            function printStateLog() {
+                console.log('▶ Existing files:',
+                    $('#existingFileList li').map(function(){
+                        // data-idx와 텍스트(파일명)만 추출
+                        return $(this).data('idx') + ':' + $(this).text().trim().split(' [')[0];
+                    }).get()
+                );
+                console.log('▶ New files:',
+                    Array.from(dt.files).map(f => f.name)
+                );
+                console.log('▶ To delete:',
+                    $('#deleteInputs input[name="deleteFileIdx"]').map(function(){
+                        return $(this).val();
+                    }).get()
+                );
+            }
         });
     </script>
 </body>

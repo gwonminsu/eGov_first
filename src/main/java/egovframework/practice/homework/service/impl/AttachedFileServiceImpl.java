@@ -75,17 +75,30 @@ public class AttachedFileServiceImpl implements AttachedFileService {
         return dao.selectByBoard(boardIdx);
     }
 
-    // 첨부파일 idx들로 점부파일 삭제
+    // 첨부파일 idx들로 점부파일 삭제 (boardFormPage 사용)
     @Override
     public void deleteFiles(String[] fileIdxs) throws Exception {
         if (fileIdxs == null) return;
         for (String idx : fileIdxs) {
+            // 삭제할 파일 정보 조회
+            AttachedFileVO vo = dao.selectFileByIdx(idx);
+            if (vo == null) continue;
+            // DB 레코드 삭제
             dao.deleteByIdx(idx);
-            // (선택) 로컬 파일도 지우려면 파일경로 조회 후 File.delete()
+            log.info("DELETE 첨부파일 이름: {}", vo.getFileName());
+            // 물리 파일 삭제
+            File file = new File(vo.getFilePath(), vo.getFileUuid() + vo.getExt());
+            if (file.exists()) {
+                if (!file.delete()) {
+                    log.warn("첨부파일 물리 삭제 실패: {}", file.getAbsolutePath());
+                } else {
+                    log.info("첨부파일 물리 삭제 성공: {}", file.getAbsolutePath());
+                }
+            }
         }
     }
 
-    // 게시물에 등록된 모든 첨부파일들 삭제
+    // 게시물에 등록된 모든 첨부파일들 삭제 (상세 페이지 삭제 버튼 사용)
     @Override
     public void deleteAllByBoard(String boardIdx) throws Exception {
         // DB에서 해당 게시물의 첨부파일 목록 조회

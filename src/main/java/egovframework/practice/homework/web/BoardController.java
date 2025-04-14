@@ -91,7 +91,9 @@ public class BoardController {
                 model.addAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
                 return selectBoard(idx, model);  // 상세페이지로 돌아감
             }
-            boardVO = boardService.selectBoard(idx);
+            boardVO = boardService.selectBoard(idx); // 수정할 게시글 정보를 VO에다 넣어줌
+            List<AttachedFileVO> fileList = fileService.getFiles(idx); // 첨부파일 목록을 꺼내서
+            model.addAttribute("fileList", fileList); // 모델에 담아주기
         } else {
             // 등록 모드: 새 VO 생성
             boardVO = new BoardVO();
