@@ -15,13 +15,39 @@
             font-size: 1.2em;
         }
     </style>
+    <script type="text/javascript">
+        function fn_link_page(pageNo) {
+            // form id로 폼 가져오기
+            var form = document.getElementById('searchForm');
+            // hidden input 가져오기 (없으면 생성)
+            var pageInput = document.getElementById('pageIndex');
+            if (!pageInput) {
+                pageInput = document.createElement('input');
+                pageInput.type = 'hidden';
+                pageInput.name = 'pageIndex';
+                pageInput.id   = 'pageIndex';
+                form.appendChild(pageInput);
+            }
+            // 클릭한 페이지 번호 세팅
+            pageInput.value = pageNo;
+            form.submit();
+        }
+    </script>
 </head>
 <body>
     <h2>게시글 목록</h2>
 
     <!-- 검색 폼 -->
     <c:url var="searchUrl" value="/board/mainBoardList.do"/>
-    <form action="${searchUrl}" method="get" style="margin-bottom:1em;">
+    <form id="searchForm" action="${searchUrl}" method="get" style="margin-bottom:1em;">
+        <c:choose>
+            <c:when test="${not empty param.pageIndex}">
+                <input type="hidden" id="pageIndex" name="pageIndex" value="${param.pageIndex}" />
+            </c:when>
+            <c:otherwise>
+                <input type="hidden" id="pageIndex" name="pageIndex" value="1" />
+            </c:otherwise>
+        </c:choose>
         <label for="searchType">검색조건:</label>
         <select name="searchType" id="searchType">
             <option value="author" ${searchType=='author' ? 'selected':''}>작성자</option>
@@ -32,7 +58,7 @@
         <button type="submit">검색</button>
     </form>
 
-    <p>전체: <span class="count-red"><fmt:formatNumber value="${totalCount}" type="number" groupingUsed="true"/></span>건</p>
+    <p>전체: <span class="count-red"><fmt:formatNumber value="${paginationInfo.totalRecordCount}" type="number" groupingUsed="true"/></span>건</p>
     <c:url var="newBoardFormUrl" value="/board/boardForm.do">
         <c:if test="${not empty param.searchType}">
             <c:param name="searchType" value="${param.searchType}" />
@@ -68,12 +94,19 @@
                 </c:url>
 
                 <td>
-                    <c:if test="${empty param.searchType && empty param.keyword}">
-                        <c:forEach var="i" begin="1" end="${item.level * 4}">
-                            &nbsp;
-                        </c:forEach>
-                        <c:if test="${item.level > 0}">ㄴ</c:if>
-                    </c:if>
+                    <c:choose>
+                        <%-- 실제 검색어(param.keyword)가 있을 때만 검색 모드로 간주 --%>
+                        <c:when test="${not empty param.keyword}">
+                            <%-- 검색 모드(키워드가 있을 때)는 들여쓰기 없이 --%>
+                        </c:when>
+                        <c:otherwise>
+                            <%-- 검색어가 없거나 페이징 이동일 때는 항상 계층 들여쓰기 --%>
+                            <c:forEach var="i" begin="1" end="${item.level * 4}">
+                                &nbsp;
+                            </c:forEach>
+                            <c:if test="${item.level > 0}">ㄴ</c:if>
+                        </c:otherwise>
+                    </c:choose>
                     <a href="${detailUrl}">
                         <c:out value="${item.title}" />
                     </a>
@@ -90,12 +123,10 @@
         </c:forEach>
     </table>
 
-    <egov:paginationInfo
-            pageIndex="${searchVO.pageIndex}"
-            totalRecordCount="${paginationInfo.totalRecordCount}"
-            recordCountPerPage="${paginationInfo.recordCountPerPage}"
-            pageSize="${paginationInfo.pageSize}"
-            type="image"/>
+    <ui:pagination
+            paginationInfo="${paginationInfo}"
+            type="image"
+            jsFunction="fn_link_page"/>
 
 </body>
 </html>

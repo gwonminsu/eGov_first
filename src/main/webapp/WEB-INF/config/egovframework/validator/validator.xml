@@ -32,6 +32,12 @@
 				<arg0 key="title.board.content" />
 			</field>
 		</form>
+
+		<form name="boardDefaultVO">
+			<field property="pageIndex" depends="required">
+				<arg0 key="pagination.currentPage" />
+			</field>
+		</form>
     </formset>
 
 </form-validation>
