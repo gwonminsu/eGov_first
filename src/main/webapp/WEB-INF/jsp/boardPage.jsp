@@ -72,25 +72,14 @@
                     </c:if>
                 </c:url>
 
-                <!-- 답글일 경우에만 parentUrl 생성 -->
-                <c:if test="${not empty item.parentBoardIdx}">
-                    <c:url var="parentUrl" value="/board/selectBoard.do">
-                        <c:param name="idx" value="${item.parentBoardIdx}" />
-                        <c:if test="${not empty param.searchType}">
-                            <c:param name="searchType" value="${param.searchType}" />
-                        </c:if>
-                        <c:if test="${not empty param.keyword}">
-                            <c:param name="keyword" value="${param.keyword}" />
-                        </c:if>
-                    </c:url>
-                </c:if>
-
                 <td>
-                    <!-- 답글이면 추가 -->
-                    <c:if test="${not empty item.parentBoardIdx}">
-                        <a href="${parentUrl}" title="부모 게시글로 이동">🔼</a>
-                    </c:if>
-                    <a href="${detailUrl}">${item.title}</a>
+                    <c:forEach var="i" begin="1" end="${item.level * 4}">
+                        &nbsp;
+                    </c:forEach>
+                    <c:if test="${item.level > 0}">ㄴ</c:if>
+                    <a href="${detailUrl}">
+                        <c:out value="${item.title}" />
+                    </a>
                 </td>
 
                 <td>${item.password}</td>

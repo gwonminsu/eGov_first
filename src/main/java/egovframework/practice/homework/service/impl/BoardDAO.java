@@ -19,6 +19,11 @@ public class BoardDAO {
         return sqlSession.selectList("BoardDAO.selectBoardList");
     }
 
+    // 전체 게시물 목록 트리 조회
+    public List<BoardVO> selectBoardTree() throws Exception {
+        return sqlSession.selectList("BoardDAO.selectBoardTree");
+    }
+
     // 전체 게시글 개수 조회
     public int selectBoardCount() throws Exception {
         return sqlSession.selectOne("BoardDAO.selectBoardCount");

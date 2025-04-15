@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="BoardDAO">
+    <!-- ===================현재 사용하지 않음(테스트용 쿼리)=================== -->
     <!-- 무지성 게시글 목록 조회 -->
     <select id="selectBoardList" resultType="egovframework.practice.homework.service.BoardVO">
         SELECT * FROM board ORDER BY created_at DESC
@@ -25,6 +26,42 @@
     <select id="selectMainBoardCount" resultType="int">
         SELECT COUNT(*) FROM board
         WHERE parent_board_idx IS NULL
+    </select>
+    <!-- ================================================================== -->
+
+    <!-- 검색된 게시글 목록 조회 -->
+    <select id="selectBoardTree" resultType="egovframework.practice.homework.service.BoardVO">
+        <![CDATA[
+        WITH RECURSIVE board_tree AS (
+          -- 루트 게시글(원글) 조회
+          SELECT
+            idx, author, parent_board_idx, title, password,
+            hit, content, created_at, updated_at,
+            0 AS level,
+            idx::VARCHAR AS sort_path -- 정렬용 경로: 초기값은 본인 idx(VACHAR(20)이므로 VARCHAR으로 형 변환 필요)
+          FROM board
+          WHERE parent_board_idx IS NULL
+
+          UNION ALL
+
+          -- 답글: 부모의 level + 1
+          SELECT
+            b.idx, b.author, b.parent_board_idx, b.title, b.password,
+            b.hit, b.content, b.created_at, b.updated_at,
+            bt.level + 1 AS level,
+            bt.sort_path || '-' || b.idx AS sort_path -- 부모 경로 뒤에 본인 idx 이어붙이기
+          FROM board b
+          JOIN board_tree bt
+            ON b.parent_board_idx = bt.idx
+          WHERE bt.level < 2
+        )
+        -- 최종 선택 시
+        SELECT
+          idx, parent_board_idx, title, author, content,
+          hit, created_at, updated_at, level
+        FROM board_tree
+        ORDER BY sort_path ASC -- 트리 경로 기반으로 사전 방식 정렬
+    ]]>
     </select>
 
     <!-- 검색된 게시글 목록 조회 -->

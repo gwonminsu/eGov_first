@@ -78,8 +78,8 @@ public class BoardController {
             log.info("SELECT " + searchType + "(이)가 " + keyword + "(으)로 검색된 게시글 목록 데이터:" + list);
             log.info("검색된 게시글 개수: {}", totalCount);
         } else {
-            list = boardService.getMainBoardList();
-            totalCount = boardService.getMainBoardCount();
+            list = boardService.getBoardTreeList();
+            totalCount = boardService.getBoardCount();
             log.info("SELECT 원글 목록 데이터: {}", list);
             log.info("전체 원글 개수: {}", totalCount);
         }
