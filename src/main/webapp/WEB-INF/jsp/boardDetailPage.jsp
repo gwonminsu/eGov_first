@@ -61,7 +61,7 @@
                     <input type="hidden" name="searchType" value="${param.searchType}" />
                 </c:if>
                 <c:if test="${not empty param.keyword}">
-                    <input type="hidden" name="keyword"    value="${param.keyword}"    />
+                    <input type="hidden" name="keyword" value="${param.keyword}" />
                 </c:if>
                 <button type="submit">목록</button>
             </form>
@@ -69,11 +69,15 @@
 
         <%-- level 1 or 2: 답글/답글의답글 → 이전(부모 상세) --%>
         <c:otherwise>
-            <c:url var="prevUrl" value="selectBoard.do">
-                <c:param name="idx" value="${board.parentBoardIdx}" />
-            </c:url>
+            <c:url var="prevUrl" value="/board/selectBoard.do" />
             <form action="${prevUrl}" method="get" style="display:inline;">
                 <input type="hidden" name="idx" value="${board.parentBoardIdx}" />
+                <c:if test="${not empty param.searchType}">
+                    <input type="hidden" name="searchType" value="${param.searchType}" />
+                </c:if>
+                <c:if test="${not empty param.keyword}">
+                    <input type="hidden" name="keyword" value="${param.keyword}" />
+                </c:if>
                 <button type="submit">이전</button>
             </form>
         </c:otherwise>
@@ -115,6 +119,12 @@
         <c:forEach var="reply" items="${replyList}">
             <c:url var="replyUrl" value="selectBoard.do">
                 <c:param name="idx" value="${reply.idx}" />
+                <c:if test="${not empty param.searchType}">
+                    <c:param name="searchType" value="${param.searchType}" />
+                </c:if>
+                <c:if test="${not empty param.keyword}">
+                    <c:param name="keyword" value="${param.keyword}" />
+                </c:if>
             </c:url>
             <li style="margin-left:${reply.level * 20}px;">
                 <a href="${replyUrl}">${reply.title}</a>

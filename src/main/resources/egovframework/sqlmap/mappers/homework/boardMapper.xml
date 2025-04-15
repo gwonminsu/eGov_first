@@ -31,26 +31,29 @@
     <select id="selectSearchBoardList" parameterType="map" resultType="egovframework.practice.homework.service.BoardVO">
         SELECT *
         FROM board
-        WHERE 1=1
-        <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">
-            AND author LIKE CONCAT('%', #{keyword}, '%')
-        </if>
-        <if test="searchType == 'title' and keyword != null and keyword.trim() != ''">
-            AND title  LIKE CONCAT('%', #{keyword}, '%')
-        </if>
+        <where>
+            <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">
+                author LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="searchType == 'title' and keyword != null and keyword.trim() != ''">
+                title  LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
         ORDER BY created_at DESC
     </select>
 
     <!-- 검색된 게시글 개수 조회 -->
     <select id="selectSearchBoardCount" parameterType="map" resultType="int">
-        SELECT COUNT(*) FROM board
-        WHERE 1=1
-        <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">
-            AND author LIKE CONCAT('%', #{keyword}, '%')
-        </if>
-        <if test="searchType == 'title' and keyword != null and keyword.trim() != ''">
-            AND title  LIKE CONCAT('%', #{keyword}, '%')
-        </if>
+        SELECT COUNT(*)
+        FROM board
+        <where>
+            <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">
+                author LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="searchType == 'title' and keyword != null and keyword.trim() != ''">
+                title  LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
     </select>
 
     <!-- 게시글 등록 -->

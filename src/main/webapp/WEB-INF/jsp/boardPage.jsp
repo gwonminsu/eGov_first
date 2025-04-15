@@ -24,7 +24,7 @@
         <label for="searchType">검색조건:</label>
         <select name="searchType" id="searchType">
             <option value="author" ${searchType=='author' ? 'selected':''}>작성자</option>
-            <option value="title"  ${searchType=='title'  ? 'selected':''}>제목</option>
+            <option value="title"  ${searchType=='title' ? 'selected':''}>제목</option>
         </select>
         <label for="keyword">검색어:</label>
         <input type="text" id="keyword" name="keyword" value="${fn:escapeXml(keyword)}" />
@@ -61,7 +61,7 @@
                         <c:param name="searchType" value="${param.searchType}" />
                     </c:if>
                     <c:if test="${not empty param.keyword}">
-                        <c:param name="keyword"    value="${param.keyword}"    />
+                        <c:param name="keyword" value="${param.keyword}" />
                     </c:if>
                 </c:url>
 
@@ -69,13 +69,19 @@
                 <c:if test="${not empty item.parentBoardIdx}">
                     <c:url var="parentUrl" value="/board/selectBoard.do">
                         <c:param name="idx" value="${item.parentBoardIdx}" />
+                        <c:if test="${not empty param.searchType}">
+                            <c:param name="searchType" value="${param.searchType}" />
+                        </c:if>
+                        <c:if test="${not empty param.keyword}">
+                            <c:param name="keyword" value="${param.keyword}" />
+                        </c:if>
                     </c:url>
                 </c:if>
 
                 <td>
                     <!-- 답글이면 추가 -->
                     <c:if test="${not empty item.parentBoardIdx}">
-                        <a href="${parentUrl}" title="부모 글로 이동">🔼</a>
+                        <a href="${parentUrl}" title="부모 게시글로 이동">🔼</a>
                     </c:if>
                     <a href="${detailUrl}">${item.title}</a>
                 </td>
