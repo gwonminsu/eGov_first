@@ -38,7 +38,8 @@
             idx, author, parent_board_idx, title, password,
             hit, content, created_at, updated_at,
             0 AS level,
-            idx::VARCHAR AS sort_path -- 정렬용 경로: 초기값은 본인 idx(VACHAR(20)이므로 VARCHAR으로 형 변환 필요)
+            idx::VARCHAR AS sort_path, -- 정렬용 경로: 초기값은 본인 idx(VACHAR(20)이므로 VARCHAR으로 형 변환 필요)
+            created_at AS root_created_at
           FROM board
           WHERE parent_board_idx IS NULL
 
@@ -49,7 +50,8 @@
             b.idx, b.author, b.parent_board_idx, b.title, b.password,
             b.hit, b.content, b.created_at, b.updated_at,
             bt.level + 1 AS level,
-            bt.sort_path || '-' || b.idx AS sort_path -- 부모 경로 뒤에 본인 idx 이어붙이기
+            bt.sort_path || '-' || b.idx AS sort_path, -- 부모 경로 뒤에 본인 idx 이어붙이기
+            bt.root_created_at
           FROM board b
           JOIN board_tree bt
             ON b.parent_board_idx = bt.idx
@@ -60,7 +62,9 @@
           idx, parent_board_idx, title, author, content,
           hit, created_at, updated_at, level
         FROM board_tree
-        ORDER BY sort_path ASC -- 트리 경로 기반으로 사전 방식 정렬
+        ORDER BY
+          root_created_at DESC, -- 원글은 최신 순으로
+          sort_path ASC -- 자식은 트리 경로 기반으로 사전 방식 정렬
     ]]>
     </select>
 
