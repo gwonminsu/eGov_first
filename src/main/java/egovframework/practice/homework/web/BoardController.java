@@ -1,11 +1,9 @@
 package egovframework.practice.homework.web;
 
-import egovframework.practice.homework.service.AttachedFileService;
-import egovframework.practice.homework.service.AttachedFileVO;
-import egovframework.practice.homework.service.BoardService;
-import egovframework.practice.homework.service.BoardVO;
+import egovframework.practice.homework.service.*;
 import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -43,8 +41,8 @@ public class BoardController {
     @Resource(name="AttachedFileService")
     private AttachedFileService fileService;
 
-//    @Resource(name = "propertiesService")
-//    protected EgovPropertyService propertiesService;
+    @Resource(name = "propertiesService")
+    protected EgovPropertyService propertiesService;
 
     // Validator 사용안함 (프론트엔드에서 검증 처리)
 //    @Resource(name = "beanValidator")
@@ -52,13 +50,13 @@ public class BoardController {
 
     // 게시글 목록 가져오기(일단 무지성으로 모든 데이터 가져옴)
     @RequestMapping("/boardList.do")
-    public String selectBoardList(ModelMap model) throws Exception {
+    public String selectBoardList(@ModelAttribute("searchVO") BoardDefaultVO searchVO, ModelMap model) throws Exception {
         // 글 목록
         List<BoardVO> list = boardService.getBoardList();
         log.info("SELECT 게시글 목록 데이터: {}", list);
         model.addAttribute("boardList", list);
         // 전체 글 개수
-        int totalCount = boardService.getBoardCount();
+        int totalCount = boardService.getBoardCount(searchVO);
         log.info("전체 글 개수: {}", totalCount);
         model.addAttribute("totalCount", totalCount);
         return "boardPage";
@@ -66,28 +64,41 @@ public class BoardController {
 
     // 메인(원글) 목록
     @RequestMapping("/mainBoardList.do")
-    public String selectMainBoardList(@RequestParam(value="searchType", required = false) String searchType,
-                                      @RequestParam(value="keyword", required = false) String keyword,
-                                      Model model) throws Exception {
+    public String selectMainBoardList(@ModelAttribute("searchVO") BoardDefaultVO searchVO, Model model) throws Exception {
+        // 페이지 Unit, Size을 property에서 가져와서 주입
+        searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+        searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+        // PaginationInfo 세팅
+        PaginationInfo paginationInfo = new PaginationInfo();
+        paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+        paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
+        paginationInfo.setPageSize(searchVO.getPageSize());
+
+        // VO 에 페이징 인덱스 전달
+        searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+        searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
         List<BoardVO> list; // 바인딩할 게시물 객체
         int totalCount; // 바인딩할 게시물 개수
-        if (searchType != null && keyword != null && !keyword.trim().isEmpty()) {
-            list = boardService.selectSearchBoardList(searchType, keyword);
-            totalCount = boardService.selectSearchBoardCount(searchType, keyword);
-            log.info("SELECT " + searchType + "(이)가 " + keyword + "(으)로 검색된 게시글 목록 데이터:" + list);
+        if (searchVO.getSearchType() != null && searchVO.getKeyword() != null && !searchVO.getKeyword().trim().isEmpty()) {
+            list = boardService.selectSearchBoardList(searchVO);
+            totalCount = boardService.selectSearchBoardCount(searchVO);
+            log.info("SELECT " + searchVO.getSearchType() + "(이)가 " + searchVO.getKeyword() + "(으)로 검색된 게시글 목록 데이터:" + list);
             log.info("검색된 게시글 개수: {}", totalCount);
         } else {
-            list = boardService.getBoardTreeList();
-            totalCount = boardService.getBoardCount();
-            log.info("SELECT 원글 목록 데이터: {}", list);
-            log.info("전체 원글 개수: {}", totalCount);
+            list = boardService.getBoardTreeList(searchVO);
+            totalCount = boardService.getBoardCount(searchVO);
+            log.info("SELECT 전체 게시물 트리 목록 데이터: {}", list);
+            log.info("전체 게시글 개수: {}", totalCount);
         }
 
+        // PaginationInfo 에 총건수 세팅
+        paginationInfo.setTotalRecordCount(totalCount);
+
         model.addAttribute("boardList",  list);
-        model.addAttribute("totalCount", totalCount);
-        model.addAttribute("searchType", searchType);
-        model.addAttribute("keyword",    keyword);
+        model.addAttribute("paginationInfo", paginationInfo);
+        model.addAttribute("searchVO", searchVO);
 
         return "boardPage";
     }

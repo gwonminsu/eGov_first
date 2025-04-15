@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> <!-- 숫자 포맷팅을 위한 라이브러리 -->
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> <!-- 검색 폼을 위한 기능 라이브러리 -->
+<%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui"%> <%-- 페이지네이션을 위한 라이브러리 --%>
 
 <html>
 <head>
@@ -88,5 +89,13 @@
             </tr>
         </c:forEach>
     </table>
+
+    <egov:paginationInfo
+            pageIndex="${searchVO.pageIndex}"
+            totalRecordCount="${paginationInfo.totalRecordCount}"
+            recordCountPerPage="${paginationInfo.recordCountPerPage}"
+            pageSize="${paginationInfo.pageSize}"
+            type="image"/>
+
 </body>
 </html>
