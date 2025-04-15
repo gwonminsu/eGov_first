@@ -59,9 +59,14 @@
         )
         -- 최종 선택 시
         SELECT
-          idx, parent_board_idx, title, author, content,
-          hit, created_at, updated_at, level
-        FROM board_tree
+          bt.idx, bt.parent_board_idx, bt.title, bt.author, bt.content,
+          bt.hit, bt.created_at, bt.updated_at, bt.level,
+          (
+            SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+            FROM attachedFile af
+            WHERE af.board_idx = bt.idx
+          ) AS has_file -- 첨부파일 존재 여부
+        FROM board_tree bt
         ORDER BY
           root_created_at DESC, -- 원글은 최신 순으로
           sort_path ASC -- 자식은 트리 경로 기반으로 사전 방식 정렬

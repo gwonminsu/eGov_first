@@ -24,4 +24,7 @@ public class BoardVO {
     private Timestamp updatedAt; // 수정 일시
 
     private int level; // 답글 레벨
+
+    private boolean hasFile; // 첨부파일 존재 여부
+
 }

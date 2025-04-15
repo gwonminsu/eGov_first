@@ -80,6 +80,9 @@
                     <a href="${detailUrl}">
                         <c:out value="${item.title}" />
                     </a>
+                    <c:if test="${item.hasFile}">
+                        &nbsp;🔗
+                    </c:if>
                 </td>
 
                 <td>${item.password}</td>
