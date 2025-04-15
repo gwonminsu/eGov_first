@@ -82,7 +82,7 @@
                 </td>
 
                 <td>${item.author}</td>
-                <td>${item.createdAt}</td>
+                <td><fmt:formatDate value="${item.createdAt}" pattern="yyyy-MM-dd"/></td>
                 <td>${item.hit}</td>
 
             </tr>

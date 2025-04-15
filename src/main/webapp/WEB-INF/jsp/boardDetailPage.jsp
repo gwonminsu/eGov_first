@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> <!-- 숫자 포맷팅을 위한 라이브러리 -->
 <html>
 <head>
     <title>게시글 상세</title>
@@ -23,10 +24,10 @@
     <!-- 수정일이 작성일과 다를 때만 표시 -->
     <c:if test="${board.updatedAt.time ne board.createdAt.time}">
       <span class="updatedMessage">
-        ( ${board.updatedAt} 에 수정됨 )
+        ( <fmt:formatDate value="${board.updatedAt}" pattern="yyyy-MM-dd HH:mm:ss"/> 에 수정됨 )
       </span>
     </c:if>
-    <div>작성자: ${board.author} | 등록일: ${board.createdAt} | 조회수: ${board.hit}</div>
+    <div>작성자: ${board.author} | 등록일: <fmt:formatDate value="${board.createdAt}" pattern="yyyy-MM-dd"/> | 조회수: ${board.hit}</div>
     <hr/>
     <div>${board.content}</div>
     <hr/>
