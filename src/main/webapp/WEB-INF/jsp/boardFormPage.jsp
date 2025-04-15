@@ -114,6 +114,14 @@
               </td>
             </tr>
 
+            <%-- 검색 파라미터 유지용 필드 --%>
+            <c:if test="${not empty param.searchType}">
+                <input type="hidden" name="searchType" value="${param.searchType}"/>
+            </c:if>
+            <c:if test="${not empty param.keyword}">
+                <input type="hidden" name="keyword"    value="${param.keyword}"/>
+            </c:if>
+
             <tr>
                 <td colspan="2" style="text-align:center;">
                     <input type="submit" value="${not empty board.idx ? '수정하기' : '등록하기'}" />
@@ -121,8 +129,14 @@
                     <c:choose>
                         <%-- 수정 모드: idx 가 있으면 본인 상세 페이지로 --%>
                         <c:when test="${not empty board.idx}">
-                            <c:url var="cancelDetailUrl" value="selectBoard.do">
-                              <c:param name="idx" value="${board.idx}"/>
+                            <c:url var="cancelDetailUrl" value="/board/selectBoard.do">
+                                <c:param name="idx" value="${board.idx}"/>
+                                <c:if test="${not empty param.searchType}">
+                                    <c:param name="searchType" value="${param.searchType}"/>
+                                </c:if>
+                                <c:if test="${not empty param.keyword}">
+                                    <c:param name="keyword"    value="${param.keyword}"/>
+                                </c:if>
                             </c:url>
                             <input type="button" value="취소" onclick="location.href='${cancelDetailUrl}';" />
                         </c:when>
@@ -131,14 +145,27 @@
                             <c:choose>
                                 <%-- 답글 작성 모드: parentBoardIdx 가 있으면 부모 상세로 --%>
                                 <c:when test="${not empty board.parentBoardIdx}">
-                                    <c:url var="cancelParentUrl" value="selectBoard.do">
-                                      <c:param name="idx" value="${board.parentBoardIdx}"/>
+                                    <c:url var="cancelParentUrl" value="/board/selectBoard.do">
+                                        <c:param name="idx" value="${board.parentBoardIdx}"/>
+                                        <c:if test="${not empty param.searchType}">
+                                            <c:param name="searchType" value="${param.searchType}"/>
+                                        </c:if>
+                                        <c:if test="${not empty param.keyword}">
+                                            <c:param name="keyword"    value="${param.keyword}"/>
+                                        </c:if>
                                     </c:url>
                                     <input type="button" value="취소" onclick="location.href='${cancelParentUrl}';" />
                                 </c:when>
                                 <%-- 원글 작성 모드: parentBoardIdx 없으면 메인 목록으로 --%>
                                 <c:otherwise>
-                                    <c:url var="cancelMainUrl" value="mainBoardList.do"/>
+                                    <c:url var="cancelMainUrl" value="/board/mainBoardList.do">
+                                        <c:if test="${not empty param.searchType}">
+                                            <c:param name="searchType" value="${param.searchType}"/>
+                                        </c:if>
+                                        <c:if test="${not empty param.keyword}">
+                                            <c:param name="keyword"    value="${param.keyword}"/>
+                                        </c:if>
+                                    </c:url>
                                     <input type="button" value="취소" onclick="location.href='${cancelMainUrl}';" />
                                 </c:otherwise>
                             </c:choose>

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import javax.annotation.Resource;
@@ -192,6 +193,9 @@ public class BoardController {
     public String insertBoard(@ModelAttribute("board") BoardVO boardVO,
                               BindingResult bindingResult,
                               @RequestParam("files") MultipartFile[] files,
+                              @RequestParam(value="searchType",   required=false) String searchType,
+                              @RequestParam(value="keyword",      required=false) String keyword,
+                              RedirectAttributes redirectAttrs,
                               Model model) throws Exception {
         // 서버에서 폼 검증
         beanValidator.validate(boardVO, bindingResult);
@@ -210,8 +214,15 @@ public class BoardController {
 
         log.info("INSERT 게시글 데이터: {}", boardVO);
 
+        // 리다이렉트 시 검색 파라미터 유지(원글이 아닌 답글인 경우만)
+        redirectAttrs.addAttribute("idx", boardVO.getIdx());
+        if (boardVO.getParentBoardIdx() != null) {
+            if (searchType != null) redirectAttrs.addAttribute("searchType", searchType);
+            if (keyword != null) redirectAttrs.addAttribute("keyword", keyword);
+        }
+
         // 작성한 글 상세 페이지로 이동
-        return "redirect:selectBoard.do?idx=" + boardVO.getIdx();
+        return "redirect:selectBoard.do";
     }
     
     // 게시글 수정
@@ -219,7 +230,10 @@ public class BoardController {
     public String updateBoard(@ModelAttribute("board") BoardVO boardVO,
                               BindingResult bindingResult,
                               @RequestParam(value="files", required=false) MultipartFile[] files,
-                              @RequestParam(value="deleteFileIdx", required=false) String[] deleteFileIdx) throws Exception {
+                              @RequestParam(value="deleteFileIdx", required=false) String[] deleteFileIdx,
+                              @RequestParam(value="searchType", required=false) String searchType,
+                              @RequestParam(value="keyword", required=false) String keyword,
+                              RedirectAttributes redirectAttrs) throws Exception {
         beanValidator.validate(boardVO, bindingResult);
         if (bindingResult.hasErrors()) {
             return "boardFormPage";
@@ -233,13 +247,21 @@ public class BoardController {
         // 새로 업로드된 파일들 저장
         fileService.saveFiles(boardVO.getIdx(), files);
 
-        return "redirect:selectBoard.do?idx=" + boardVO.getIdx();
+        // 리다이렉트 시 검색 파라미터 유지
+        redirectAttrs.addAttribute("idx", boardVO.getIdx());
+        if (searchType != null) redirectAttrs.addAttribute("searchType", searchType);
+        if (keyword    != null) redirectAttrs.addAttribute("keyword",    keyword);
+
+        return "redirect:/board/selectBoard.do";
     }
 
     // 게시글 삭제
     @RequestMapping(value="/deleteBoard.do", method=RequestMethod.POST)
     public String deleteBoard(@RequestParam("idx") String idx,
                               @RequestParam("password") String password,
+                              @RequestParam(value = "searchType", required = false) String searchType,
+                              @RequestParam(value = "keyword", required = false) String keyword,
+                              RedirectAttributes redirectAttrs,
                               Model model) throws Exception {
         // 비밀번호 검증
         if (!boardService.checkPassword(idx, password)) {
@@ -253,15 +275,18 @@ public class BoardController {
 
         // 자식을 포함한 게시글 일괄 삭제
         boardService.deleteBoard(idx);
-        // 첨부파일 전체 삭제 (DB 레코드 + 물리 파일)
-//        fileService.deleteAllByBoard(idx);
+
+        // 검색 파라미터를 리다이렉트 속성에 추가
+        if (searchType != null) redirectAttrs.addAttribute("searchType", searchType);
+        if (keyword != null) redirectAttrs.addAttribute("keyword",    keyword);
 
         if (parentIdx != null && !parentIdx.isEmpty()) {
             // 부모가 있는 경우: 부모 상세페이지로
-            return "redirect:selectBoard.do?idx=" + parentIdx;
+            redirectAttrs.addAttribute("idx", parentIdx);
+            return "redirect:/board/selectBoard.do";
         } else {
             // 부모가 없는 경우(원글): 메인 목록 페이지로
-            return "redirect:mainBoardList.do";
+            return "redirect:/board/mainBoardList.do";
         }
     }
 

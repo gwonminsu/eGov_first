@@ -32,7 +32,14 @@
     </form>
 
     <p>전체: <span class="count-red"><fmt:formatNumber value="${totalCount}" type="number" groupingUsed="true"/></span>건</p>
-    <c:url var="newBoardFormUrl" value="boardForm.do" />
+    <c:url var="newBoardFormUrl" value="/board/boardForm.do">
+        <c:if test="${not empty param.searchType}">
+            <c:param name="searchType" value="${param.searchType}" />
+        </c:if>
+        <c:if test="${not empty param.keyword}">
+            <c:param name="keyword"    value="${param.keyword}"    />
+        </c:if>
+    </c:url>
     <button type="button" onclick="location.href='${newBoardFormUrl}';">글쓰기</button>
     <table border="1">
         <tr>

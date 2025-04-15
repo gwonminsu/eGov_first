@@ -87,11 +87,18 @@
         <input type="hidden" name="idx" value="${board.idx}" />
         비밀번호: <input type="password" name="password" />
 
-        <c:url var="editFormUrl" value="boardForm.do"/>
+        <c:if test="${not empty param.searchType}">
+            <input type="hidden" name="searchType" value="${param.searchType}" />
+        </c:if>
+        <c:if test="${not empty param.keyword}">
+            <input type="hidden" name="keyword"    value="${param.keyword}"    />
+        </c:if>
+
+        <c:url var="editFormUrl" value="/board/boardForm.do" />
         <button type="submit" formaction="${editFormUrl}" formmethod="get">
           수정
         </button>
-        <c:url var="deleteUrl" value="deleteBoard.do"/>
+        <c:url var="deleteUrl" value="/board/deleteBoard.do"/>
         <button type="submit" formaction="${deleteUrl}" formmethod="post">
           삭제
         </button>
@@ -103,6 +110,12 @@
             <c:url var="replyUrl" value="boardForm.do"/>
             <form action="${replyUrl}" method="get" style="display:inline;">
                 <input type="hidden" name="parentBoardIdx" value="${board.idx}"/>
+                <c:if test="${not empty param.searchType}">
+                    <input type="hidden" name="searchType" value="${param.searchType}" />
+                </c:if>
+                <c:if test="${not empty param.keyword}">
+                    <input type="hidden" name="keyword" value="${param.keyword}" />
+                </c:if>
                 <button type="submit">답변등록</button>
             </form>
             <h3>답글 목록</h3>
@@ -110,7 +123,7 @@
         <%-- 답글의 답글(level>=2)일 때는 비활성화 --%>
         <c:otherwise>
             <button type="button" disabled style="display:inline;" title="더 이상 답변을 달 수 없습니다">
-            답변등록
+                답변등록
             </button>
         </c:otherwise>
     </c:choose>
