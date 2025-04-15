@@ -4,16 +4,11 @@
 <head>
     <title>게시글 상세</title>
     <style>
-        .errorSummary { border:1px solid red; padding:10px; margin-bottom:15px; color: red; }
-        .updatedMessage { color: gray; font-size: 0.8em; }
     </style>
+    <!-- jquery 사용 -->
+    <script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
 </head>
 <body>
-    <!-- 에러 메시지 -->
-    <c:if test="${not empty errorMessage}">
-        <div class="errorSummary">${errorMessage}</div>
-    </c:if>
-
     <c:choose>
         <%-- level 0: 원글 --%>
         <c:when test="${board.level == 0}">
@@ -145,5 +140,16 @@
             </li>
         </c:forEach>
     </ul>
+
+    <script>
+        $(function(){
+            // 서버에서 모델에 담긴 errorMessage를 꺼내서 알림
+            // c:out으로 XSS 공격 예방
+            var errMsg = '<c:out value="${errorMessage}" default=""/>';
+            if (errMsg) {
+                alert(errMsg);
+            }
+        });
+    </script>
 </body>
 </html>

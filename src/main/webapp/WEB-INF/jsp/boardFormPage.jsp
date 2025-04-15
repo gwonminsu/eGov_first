@@ -55,28 +55,28 @@
             <tr>
                 <th>제목</th>
                 <td>
-                    <form:input path="title" />
+                    <form:input path="title" required="required" />
                     <form:errors path="title" cssClass="error" />
                 </td>
             </tr>
             <tr>
                 <th>작성자</th>
                 <td>
-                    <form:input path="author" />
+                    <form:input path="author" required="required" />
                     <form:errors path="author" cssClass="error" />
                 </td>
             </tr>
             <tr>
                 <th>비밀번호</th>
                 <td>
-                    <form:password path="password" />
+                    <form:password path="password" required="required" id="passwordField" />
                     <form:errors path="password" cssClass="error" />
                 </td>
             </tr>
             <tr>
                 <th>내용</th>
                 <td>
-                    <form:textarea path="content" rows="5" cols="50" />
+                    <form:textarea path="content" rows="5" cols="50" required="required" />
                     <form:errors path="content" cssClass="error" />
                 </td>
             </tr>

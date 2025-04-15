@@ -46,9 +46,9 @@ public class BoardController {
 //    @Resource(name = "propertiesService")
 //    protected EgovPropertyService propertiesService;
 
-    // Validator 사용
-    @Resource(name = "beanValidator")
-    protected DefaultBeanValidator beanValidator;
+    // Validator 사용안함 (프론트엔드에서 검증 처리)
+//    @Resource(name = "beanValidator")
+//    protected DefaultBeanValidator beanValidator;
 
     // 게시글 목록 가져오기(일단 무지성으로 모든 데이터 가져옴)
     @RequestMapping("/boardList.do")
@@ -198,11 +198,11 @@ public class BoardController {
                               RedirectAttributes redirectAttrs,
                               Model model) throws Exception {
         // 서버에서 폼 검증
-        beanValidator.validate(boardVO, bindingResult);
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("board", boardVO);
-            return "boardFormPage";
-        }
+//        beanValidator.validate(boardVO, bindingResult);
+//        if (bindingResult.hasErrors()) {
+//            model.addAttribute("board", boardVO);
+//            return "boardFormPage";
+//        }
 
         // 현재 타임스탬프 생성 후, 생성일과 수정일 필드에 설정
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -234,10 +234,10 @@ public class BoardController {
                               @RequestParam(value="searchType", required=false) String searchType,
                               @RequestParam(value="keyword", required=false) String keyword,
                               RedirectAttributes redirectAttrs) throws Exception {
-        beanValidator.validate(boardVO, bindingResult);
-        if (bindingResult.hasErrors()) {
-            return "boardFormPage";
-        }
+//        beanValidator.validate(boardVO, bindingResult);
+//        if (bindingResult.hasErrors()) {
+//            return "boardFormPage";
+//        }
         // update_at 값만 update
         boardVO.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         log.info("UPDATE 게시글 데이터: {}", boardVO);
