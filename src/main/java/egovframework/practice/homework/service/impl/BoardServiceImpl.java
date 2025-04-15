@@ -1,10 +1,12 @@
 package egovframework.practice.homework.service.impl;
 
 import egovframework.practice.homework.service.AttachedFileService;
+import egovframework.practice.homework.service.BoardDefaultVO;
 import egovframework.practice.homework.service.BoardService;
 import egovframework.practice.homework.service.BoardVO;
 import egovframework.practice.test.service.TestVO;
 import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
+import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,9 @@ public class BoardServiceImpl implements BoardService {
     @Resource(name="boardIdGnrService")
     private EgovIdGnrService idgen;
 
+    @Resource(name="propertiesService")
+    private EgovPropertyService propertiesService;
+
     @Resource(name = "BoardDAO")
     protected BoardDAO boardDAO;
 
@@ -37,14 +42,14 @@ public class BoardServiceImpl implements BoardService {
 
     // 전체 게시글 목록 트리 조회
     @Override
-    public List<BoardVO> getBoardTreeList() throws Exception {
-        return boardDAO.selectBoardTree();
+    public List<BoardVO> getBoardTreeList(BoardDefaultVO vo) throws Exception {
+        return boardDAO.selectBoardTree(vo);
     }
 
     // 전체 게시글 개수 조회
     @Override
-    public int getBoardCount() throws Exception {
-        return boardDAO.selectBoardCount();
+    public int getBoardCount(BoardDefaultVO vo) throws Exception {
+        return boardDAO.selectBoardCount(vo);
     }
 
     // 원글 목록 조회
@@ -61,20 +66,14 @@ public class BoardServiceImpl implements BoardService {
 
     // 검색된 게시글 목록 조회
     @Override
-    public List<BoardVO> selectSearchBoardList(String searchType, String keyword) throws Exception {
-        Map<String,String> params = new HashMap<>();
-        params.put("searchType", searchType);
-        params.put("keyword", keyword);
-        return boardDAO.selectSearchBoardList(params);
+    public List<BoardVO> selectSearchBoardList(BoardDefaultVO vo) throws Exception {
+        return boardDAO.selectSearchBoardList(vo);
     }
 
     // 검색된 게시글 개수 조회
     @Override
-    public int selectSearchBoardCount(String searchType, String keyword) throws Exception {
-        Map<String,String> params = new HashMap<>();
-        params.put("searchType", searchType);
-        params.put("keyword", keyword);
-        return boardDAO.selectSearchBoardCount(params);
+    public int selectSearchBoardCount(BoardDefaultVO vo) throws Exception {
+        return boardDAO.selectSearchBoardCount(vo);
     }
 
     // 게시글 등록

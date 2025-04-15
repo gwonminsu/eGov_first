@@ -1,5 +1,6 @@
 package egovframework.practice.homework.service.impl;
 
+import egovframework.practice.homework.service.BoardDefaultVO;
 import egovframework.practice.homework.service.BoardVO;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,13 +21,13 @@ public class BoardDAO {
     }
 
     // 전체 게시물 목록 트리 조회
-    public List<BoardVO> selectBoardTree() throws Exception {
-        return sqlSession.selectList("BoardDAO.selectBoardTree");
+    public List<BoardVO> selectBoardTree(BoardDefaultVO vo) throws Exception {
+        return sqlSession.selectList("BoardDAO.selectBoardTree", vo);
     }
 
     // 전체 게시글 개수 조회
-    public int selectBoardCount() throws Exception {
-        return sqlSession.selectOne("BoardDAO.selectBoardCount");
+    public int selectBoardCount(BoardDefaultVO vo) throws Exception {
+        return sqlSession.selectOne("BoardDAO.selectBoardCount", vo);
     }
 
     // 원글 목록 조회
@@ -40,13 +41,13 @@ public class BoardDAO {
     }
 
     // 검색된 게시글 목록 조회
-    public List<BoardVO> selectSearchBoardList(Map<String, String> params) throws Exception {
-        return sqlSession.selectList("BoardDAO.selectSearchBoardList", params);
+    public List<BoardVO> selectSearchBoardList(BoardDefaultVO vo) throws Exception {
+        return sqlSession.selectList("BoardDAO.selectSearchBoardList", vo);
     }
 
     // 검색된 게시글 개수 조회
-    public int selectSearchBoardCount(Map<String, String> params) throws Exception {
-        return sqlSession.selectOne("BoardDAO.selectSearchBoardCount", params);
+    public int selectSearchBoardCount(BoardDefaultVO vo) throws Exception {
+        return sqlSession.selectOne("BoardDAO.selectSearchBoardCount", vo);
     }
 
     // 게시글 등록

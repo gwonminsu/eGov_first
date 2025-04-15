@@ -11,7 +11,7 @@
     </select>
 
     <!-- 전체 게시글 개수 조회 -->
-    <select id="selectBoardCount" resultType="int">
+    <select id="selectBoardCount" parameterType="egovframework.practice.homework.service.BoardDefaultVO" resultType="int">
         SELECT COUNT(*) FROM board
     </select>
 
@@ -30,7 +30,7 @@
     <!-- ================================================================== -->
 
     <!-- 게시글 목록 트리 조회 -->
-    <select id="selectBoardTree" resultType="egovframework.practice.homework.service.BoardVO">
+    <select id="selectBoardTree" parameterType="egovframework.practice.homework.service.BoardDefaultVO" resultType="egovframework.practice.homework.service.BoardVO">
         <![CDATA[
         WITH RECURSIVE board_tree AS (
           -- 루트 게시글(원글) 조회
@@ -70,11 +70,13 @@
         ORDER BY
           root_created_at DESC, -- 원글은 최신 순으로
           sort_path ASC -- 자식은 트리 경로 기반으로 사전 방식 정렬
+        LIMIT #{recordCountPerPage}  -- pageUnit (=10)
+        OFFSET #{firstIndex} -- (pageIndex-1)*pageUnit
     ]]>
     </select>
 
     <!-- 검색된 게시글 목록 조회 -->
-    <select id="selectSearchBoardList" parameterType="map" resultType="egovframework.practice.homework.service.BoardVO">
+    <select id="selectSearchBoardList" parameterType="egovframework.practice.homework.service.BoardDefaultVO" resultType="egovframework.practice.homework.service.BoardVO">
         SELECT
             b.idx, b.author,
             b.parent_board_idx AS parentBoardIdx,
@@ -97,10 +99,12 @@
             </if>
         </where>
         ORDER BY created_at DESC
+        LIMIT #{recordCountPerPage}  -- pageUnit (=10)
+        OFFSET #{firstIndex} -- (pageIndex-1)*pageUnit
     </select>
 
     <!-- 검색된 게시글 개수 조회 -->
-    <select id="selectSearchBoardCount" parameterType="map" resultType="int">
+    <select id="selectSearchBoardCount" parameterType="egovframework.practice.homework.service.BoardDefaultVO" resultType="int">
         SELECT COUNT(*)
         FROM board
         <where>
