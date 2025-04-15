@@ -44,21 +44,15 @@
     <table border="1">
         <tr>
             <th>Idx</th>
-            <th>작성자</th>
-            <th>부모 게시글</th>
             <th>제목</th>
-            <th>비밀번호</th>
+            <th>작성자</th>
+            <th>등록일</th>
             <th>조회수</th>
-            <th>내용</th>
-            <th>등록 시간</th>
-            <th>수정 시간</th>
         </tr>
         <!-- Model에 담긴 boardList 데이터를 JSTL forEach 태그를 통해 반복 출력 -->
         <c:forEach var="item" items="${boardList}">
             <tr>
                 <td>${item.idx}</td>
-                <td>${item.author}</td>
-                <td>${item.parentBoardIdx}</td>
 
                 <!-- 원글일 경우 -->
                 <c:url var="detailUrl" value="/board/selectBoard.do">
@@ -73,10 +67,12 @@
                 </c:url>
 
                 <td>
-                    <c:forEach var="i" begin="1" end="${item.level * 4}">
-                        &nbsp;
-                    </c:forEach>
-                    <c:if test="${item.level > 0}">ㄴ</c:if>
+                    <c:if test="${empty param.searchType && empty param.keyword}">
+                        <c:forEach var="i" begin="1" end="${item.level * 4}">
+                            &nbsp;
+                        </c:forEach>
+                        <c:if test="${item.level > 0}">ㄴ</c:if>
+                    </c:if>
                     <a href="${detailUrl}">
                         <c:out value="${item.title}" />
                     </a>
@@ -85,11 +81,10 @@
                     </c:if>
                 </td>
 
-                <td>${item.password}</td>
-                <td>${item.hit}</td>
-                <td>${item.content}</td>
+                <td>${item.author}</td>
                 <td>${item.createdAt}</td>
-                <td>${item.updatedAt}</td>
+                <td>${item.hit}</td>
+
             </tr>
         </c:forEach>
     </table>

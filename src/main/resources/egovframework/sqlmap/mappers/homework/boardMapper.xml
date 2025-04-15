@@ -29,7 +29,7 @@
     </select>
     <!-- ================================================================== -->
 
-    <!-- 검색된 게시글 목록 조회 -->
+    <!-- 게시글 목록 트리 조회 -->
     <select id="selectBoardTree" resultType="egovframework.practice.homework.service.BoardVO">
         <![CDATA[
         WITH RECURSIVE board_tree AS (
@@ -75,8 +75,19 @@
 
     <!-- 검색된 게시글 목록 조회 -->
     <select id="selectSearchBoardList" parameterType="map" resultType="egovframework.practice.homework.service.BoardVO">
-        SELECT *
-        FROM board
+        SELECT
+            b.idx, b.author,
+            b.parent_board_idx AS parentBoardIdx,
+            b.title, b.password, b.hit, b.content,
+            b.created_at AS createdAt,
+            b.updated_at AS updatedAt,
+            -- 첨부파일
+            (
+                SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+                FROM attachedFile af
+                WHERE af.board_idx = b.idx
+            ) AS has_file
+        FROM board b
         <where>
             <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">
                 author LIKE CONCAT('%', #{keyword}, '%')
