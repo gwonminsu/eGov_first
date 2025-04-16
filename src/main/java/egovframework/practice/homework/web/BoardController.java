@@ -114,7 +114,7 @@ public class BoardController {
         if (idx != null && !idx.isEmpty()) { // 게시글 idx가 있으면 수정 모드 폼
             // 수정 모드: 비밀번호 검증 후 기존 게시글 불러오기
             if (password == null || !boardService.checkPassword(idx, password)) {
-                model.addAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
+                model.addAttribute("errorMessage", "[수정불가]비밀번호가 일치하지 않습니다.");
                 return selectBoard(idx, model);  // 상세페이지로 돌아감
             }
             boardVO = boardService.selectBoard(idx); // 수정할 게시글 정보를 VO에다 넣어줌
@@ -226,14 +226,14 @@ public class BoardController {
         log.info("INSERT 게시글 데이터: {}", boardVO);
 
         // 리다이렉트 시 검색 파라미터 유지(원글이 아닌 답글인 경우만)
-        redirectAttrs.addAttribute("idx", boardVO.getIdx());
+        // redirectAttrs.addAttribute("idx", boardVO.getIdx());
         if (boardVO.getParentBoardIdx() != null) {
             if (searchType != null) redirectAttrs.addAttribute("searchType", searchType);
             if (keyword != null) redirectAttrs.addAttribute("keyword", keyword);
         }
 
-        // 작성한 글 상세 페이지로 이동
-        return "redirect:selectBoard.do";
+        // 글 목록 페이지로 이동
+        return "redirect:/board/mainBoardList.do";
     }
     
     // 게시글 수정
@@ -259,11 +259,12 @@ public class BoardController {
         fileService.saveFiles(boardVO.getIdx(), files);
 
         // 리다이렉트 시 검색 파라미터 유지
-        redirectAttrs.addAttribute("idx", boardVO.getIdx());
+        // redirectAttrs.addAttribute("idx", boardVO.getIdx());
         if (searchType != null) redirectAttrs.addAttribute("searchType", searchType);
         if (keyword    != null) redirectAttrs.addAttribute("keyword",    keyword);
 
-        return "redirect:/board/selectBoard.do";
+        // 글 목록 페이지로 이동
+        return "redirect:/board/mainBoardList.do";
     }
 
     // 게시글 삭제
@@ -276,7 +277,7 @@ public class BoardController {
                               Model model) throws Exception {
         // 비밀번호 검증
         if (!boardService.checkPassword(idx, password)) {
-            model.addAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
+            model.addAttribute("errorMessage", "[삭제불가]비밀번호가 일치하지 않습니다.");
             return selectBoard(idx, model);
         }
 
