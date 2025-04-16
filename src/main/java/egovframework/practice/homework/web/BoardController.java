@@ -48,7 +48,7 @@ public class BoardController {
 //    @Resource(name = "beanValidator")
 //    protected DefaultBeanValidator beanValidator;
 
-    // 게시글 목록 가져오기(일단 무지성으로 모든 데이터 가져옴)
+    // 게시글 목록 가져오기(일단 테스트용으로 모든 데이터 가져옴)
     @RequestMapping("/boardList.do")
     public String selectBoardList(@ModelAttribute("searchVO") BoardDefaultVO searchVO, ModelMap model) throws Exception {
         // 글 목록
@@ -167,14 +167,14 @@ public class BoardController {
     @RequestMapping("/downloadFile.do")
     public void downloadFile(@RequestParam("fileIdx") String fileIdx,
                              HttpServletResponse response) throws Exception {
-        // 1) 서비스에서 VO를 꺼낸다
+        // 서비스에서 VO를 꺼낸다
         AttachedFileVO fileVO = fileService.getFileByIdx(fileIdx);
         if (fileVO == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        // 2) VO에서 필요한 값 꺼내기
+        // VO에서 필요한 값 꺼내기
         String storedFileName = fileVO.getFileUuid() + fileVO.getExt();   // 실제 저장된 파일명
         String originalFileName = fileVO.getFileName(); // 사용자에게 보여줄 원본 파일명
         String fullPath = fileVO.getFilePath() + File.separator + storedFileName;
