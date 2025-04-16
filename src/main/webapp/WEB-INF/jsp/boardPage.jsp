@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> <!-- 숫자 포맷팅을 위한 라이브러리 -->
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> <!-- 검색 폼을 위한 기능 라이브러리 -->
 <%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui"%> <%-- 페이지네이션을 위한 라이브러리 --%>
@@ -39,24 +40,17 @@
 
     <!-- 검색 폼 -->
     <c:url var="searchUrl" value="/board/mainBoardList.do"/>
-    <form id="searchForm" action="${searchUrl}" method="get" style="margin-bottom:1em;">
-        <c:choose>
-            <c:when test="${not empty param.pageIndex}">
-                <input type="hidden" id="pageIndex" name="pageIndex" value="${param.pageIndex}" />
-            </c:when>
-            <c:otherwise>
-                <input type="hidden" id="pageIndex" name="pageIndex" value="1" />
-            </c:otherwise>
-        </c:choose>
+    <form:form id="searchForm" modelAttribute="searchVO" method="get" action="${searchUrl}" style="margin-bottom:1em;">
+        <form:hidden path="pageIndex" id="pageIndex"/>
         <label for="searchType">검색조건:</label>
-        <select name="searchType" id="searchType">
-            <option value="author" ${searchType=='author' ? 'selected':''}>작성자</option>
-            <option value="title"  ${searchType=='title' ? 'selected':''}>제목</option>
-        </select>
+        <form:select path="searchType" id="searchType">
+            <form:option value="author" label="작성자"/>
+            <form:option value="title"  label="제목"/>
+        </form:select>
         <label for="keyword">검색어:</label>
-        <input type="text" id="keyword" name="keyword" value="${fn:escapeXml(keyword)}" />
-        <button type="submit">검색</button>
-    </form>
+        <form:input path="keyword" id="keyword"/>
+        <button type="submit" onclick="document.getElementById('pageIndex').value='1';">검색</button>
+    </form:form>
 
     <p>전체: <span class="count-red"><fmt:formatNumber value="${paginationInfo.totalRecordCount}" type="number" groupingUsed="true"/></span>건</p>
     <c:url var="newBoardFormUrl" value="/board/boardForm.do">

@@ -204,8 +204,8 @@ public class BoardController {
     public String insertBoard(@ModelAttribute("board") BoardVO boardVO,
                               BindingResult bindingResult,
                               @RequestParam("files") MultipartFile[] files,
-                              @RequestParam(value="searchType",   required=false) String searchType,
-                              @RequestParam(value="keyword",      required=false) String keyword,
+                              @RequestParam(value="searchType", required=false) String searchType,
+                              @RequestParam(value="keyword", required=false) String keyword,
                               RedirectAttributes redirectAttrs,
                               Model model) throws Exception {
         // 서버에서 폼 검증

@@ -135,7 +135,7 @@
                                     <c:param name="searchType" value="${param.searchType}"/>
                                 </c:if>
                                 <c:if test="${not empty param.keyword}">
-                                    <c:param name="keyword"    value="${param.keyword}"/>
+                                    <c:param name="keyword" value="${param.keyword}"/>
                                 </c:if>
                             </c:url>
                             <input type="button" value="취소" onclick="location.href='${cancelDetailUrl}';" />
