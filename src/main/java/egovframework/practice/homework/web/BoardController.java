@@ -261,7 +261,7 @@ public class BoardController {
         // 리다이렉트 시 검색 파라미터 유지
         // redirectAttrs.addAttribute("idx", boardVO.getIdx());
         if (searchType != null) redirectAttrs.addAttribute("searchType", searchType);
-        if (keyword    != null) redirectAttrs.addAttribute("keyword",    keyword);
+        if (keyword != null) redirectAttrs.addAttribute("keyword", keyword);
 
         // 글 목록 페이지로 이동
         return "redirect:/board/mainBoardList.do";
@@ -290,7 +290,7 @@ public class BoardController {
 
         // 검색 파라미터를 리다이렉트 속성에 추가
         if (searchType != null) redirectAttrs.addAttribute("searchType", searchType);
-        if (keyword != null) redirectAttrs.addAttribute("keyword",    keyword);
+        if (keyword != null) redirectAttrs.addAttribute("keyword", keyword);
 
         if (parentIdx != null && !parentIdx.isEmpty()) {
             // 부모가 있는 경우: 부모 상세페이지로
