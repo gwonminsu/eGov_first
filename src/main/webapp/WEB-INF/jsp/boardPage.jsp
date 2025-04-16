@@ -15,8 +15,13 @@
             font-weight: bold;
             font-size: 1.2em;
         }
+
+        .pagination img.disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
     </style>
-    <script type="text/javascript">
+    <script>
         function fn_link_page(pageNo) {
             // form id로 폼 가져오기
             var form = document.getElementById('searchForm');
@@ -32,6 +37,32 @@
             // 클릭한 페이지 번호 세팅
             pageInput.value = pageNo;
             form.submit();
+        }
+
+        // 현재 속한 그룹의 시작 페이지 계산
+        function getGroupStart(current, pageSize) {
+            return current - ((current - 1) % pageSize);
+        }
+
+        // 이동할 pageIndex 계산
+        function calcPage(action, current, pageSize, total) {
+            var groupStart = getGroupStart(current, pageSize);
+            switch (action) {
+                case 'first':     return 1;
+                case 'prevGroup': return Math.max(1, groupStart - pageSize);
+                case 'nextGroup': return Math.min(total, groupStart + pageSize);
+                case 'last':      return total;
+                default:          return current;
+            }
+        }
+
+        // 버튼 작동 함수
+        function jumpPage(action) {
+            var current  = ${paginationInfo.currentPageNo};
+            var total    = ${paginationInfo.totalPageCount};
+            var pageSize = ${paginationInfo.pageSize};
+            var target   = calcPage(action, current, pageSize, total);
+            fn_link_page(target);
         }
     </script>
 </head>
@@ -117,10 +148,75 @@
         </c:forEach>
     </table>
 
-    <ui:pagination
-            paginationInfo="${paginationInfo}"
-            type="image"
-            jsFunction="fn_link_page"/>
+    <!-- 페이지네이션 UI -->
+    <c:url var="firstPageUrl" value="/images/egovframework/cmmn/btn_page_pre10.gif"/>
+    <c:url var="prevPageUrl" value="/images/egovframework/cmmn/btn_page_pre1.gif"/>
+    <c:url var="nextPageUrl" value="/images/egovframework/cmmn/btn_page_next1.gif"/>
+    <c:url var="lastPageUrl" value="/images/egovframework/cmmn/btn_page_next10.gif"/>
+
+
+    <div class="pagination">
+        <!-- 처음 -->
+        <c:choose>
+            <c:when test="${paginationInfo.currentPageNo > 1}">
+                <a href="javascript:jumpPage('first');">
+                    <img src="${firstPageUrl}" border="0" alt="처음"/>
+                </a>
+            </c:when>
+            <c:otherwise>
+                <!-- 기능 비활성화: 링크 제거, .disabled 클래스 추가 -->
+                <img src="${firstPageUrl}" class="disabled" border="0" alt="처음"/>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- 이전 그룹 -->
+        <c:choose>
+            <c:when test="${paginationInfo.firstPageNoOnPageList > 1}">
+                <a href="javascript:jumpPage('prevGroup');">
+                    <img src="${prevPageUrl}" border="0" alt="이전 10페이지"/>
+                </a>
+            </c:when>
+            <c:otherwise>
+                <img src="${prevPageUrl}" class="disabled" border="0" alt="이전 10페이지"/>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- 페이지 번호 -->
+        <c:forEach var="page" begin="${paginationInfo.firstPageNoOnPageList}" end="${paginationInfo.lastPageNoOnPageList}">
+            <c:choose>
+                <c:when test="${page == paginationInfo.currentPageNo}">
+                    <strong>${page}</strong>
+                </c:when>
+                <c:otherwise>
+                    <a href="javascript:fn_link_page(${page});">${page}</a>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+
+        <!-- 다음 -->
+        <c:choose>
+            <c:when test="${paginationInfo.currentPageNo < paginationInfo.totalPageCount}">
+                <a href="javascript:jumpPage('nextGroup');">
+                    <img src="${nextPageUrl}"  border="0" alt="다음"/>
+                </a>
+            </c:when>
+            <c:otherwise>
+                <img src="${nextPageUrl}"  class="disabled" border="0" alt="다음"/>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- 마지막 -->
+        <c:choose>
+            <c:when test="${paginationInfo.currentPageNo < paginationInfo.totalPageCount}">
+                <a href="javascript:jumpPage('last');">
+                    <img src="${lastPageUrl}" border="0" alt="마지막"/>
+                </a>
+            </c:when>
+            <c:otherwise>
+                <img src="${lastPageUrl}" class="disabled" border="0" alt="마지막"/>
+            </c:otherwise>
+        </c:choose>
+    </div>
 
 </body>
 </html>
