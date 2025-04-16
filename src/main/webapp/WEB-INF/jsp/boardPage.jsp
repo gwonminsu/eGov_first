@@ -16,6 +16,25 @@
             font-size: 1.2em;
         }
 
+        .board-table {
+            width: 90%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        .board-table th,
+        .board-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        .board-table th.center,
+        .board-table td.center {
+            text-align: center;
+        }
+
+        .pagination {
+            text-align: center;
+            margin: 1em 0;
+        }
         .pagination img.disabled {
             opacity: 0.5;
             cursor: default;
@@ -93,18 +112,18 @@
         </c:if>
     </c:url>
     <button type="button" onclick="location.href='${newBoardFormUrl}';">글쓰기</button>
-    <table border="1">
+    <table class="board-table">
         <tr>
-            <th>순번</th>
+            <th class="center">순번</th>
             <th>제목</th>
-            <th>작성자</th>
-            <th>등록일</th>
-            <th>조회수</th>
+            <th class="center">작성자</th>
+            <th class="center">등록일</th>
+            <th class="center">조회수</th>
         </tr>
         <!-- Model에 담긴 boardList 데이터를 JSTL forEach 태그를 통해 반복 출력 -->
         <c:forEach var="item" items="${boardList}">
             <tr>
-                <td>${item.number}</td>
+                <td class="center">${item.number}</td>
 
                 <!-- 원글일 경우 -->
                 <c:url var="detailUrl" value="/board/selectBoard.do">
@@ -140,9 +159,9 @@
                     </c:if>
                 </td>
 
-                <td>${item.author}</td>
-                <td><fmt:formatDate value="${item.createdAt}" pattern="yyyy-MM-dd"/></td>
-                <td>${item.hit}</td>
+                <td class="center">${item.author}</td>
+                <td class="center"><fmt:formatDate value="${item.createdAt}" pattern="yyyy-MM-dd"/></td>
+                <td class="center">${item.hit}</td>
 
             </tr>
         </c:forEach>
