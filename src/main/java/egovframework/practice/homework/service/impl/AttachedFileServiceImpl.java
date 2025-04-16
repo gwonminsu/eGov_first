@@ -44,7 +44,7 @@ public class AttachedFileServiceImpl implements AttachedFileService {
             if (mf.isEmpty()) continue; // 더 이상 파일 없으면 작업 끝
             String idx = idgen1.getNextStringId(); // idx 발급
             String uuid = idgen2.getNextStringId(); // uuid 발급
-            String origName = mf.getOriginalFilename();
+            String origName = mf.getOriginalFilename(); // 파일의 원래 이름
             String ext = origName.substring(origName.lastIndexOf('.')); // 확장자
             String savedName = uuid + ext; // uuid로 새로운 파일 이름 생성
             File dest = new File(uploadDir, savedName); // 새로운 이름으로 업로드 경로에 파일 생성

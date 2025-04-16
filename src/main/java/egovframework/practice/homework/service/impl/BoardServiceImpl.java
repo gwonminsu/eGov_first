@@ -34,7 +34,7 @@ public class BoardServiceImpl implements BoardService {
     @Resource(name = "BoardDAO")
     protected BoardDAO boardDAO;
 
-    // 무지성 게시글 목록 조회
+    // 모든 게시글 목록 조회(테스트 전용)
     @Override
     public List<BoardVO> getBoardList() throws Exception {
         return boardDAO.selectBoardList();

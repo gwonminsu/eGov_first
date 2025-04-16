@@ -18,7 +18,7 @@
 
         .board-table {
             width: 90%;
-            margin: 0 auto;
+            margin-top: 30px
             border-collapse: collapse;
         }
         .board-table th,
