@@ -62,28 +62,28 @@
 ## 📁 프로젝트 구조
 
 프로젝트의 기본 구조는 아래와 같이 구성되어 있습니다.  
-eGov_first-main/
-├─ src/
-│  ├─ main/
-│  │  ├─ java/
-│  │  │  └─ homework/                   // 게시판 관련 핵심 코드 모음
-│  │  │     ├─ controller/              // 요청 처리 컨트롤러
-│  │  │     ├─ service/                 // 비즈니스 로직 처리 (게시판, 첨부파일, idgen 등), MyBatis를 통한 DB 연동 (매퍼 호출)
-│  │  │     ├─ dao/                     // MyBatis를 통한 DB 연동 (매퍼 호출)
-│  │  │     ├─ model/                   // 도메인 객체 (Board, AttachedFile 등)
-│  │  │     ├─ util/                    // 파일 업로드, 공통 기능 등 유틸 클래스
-│  │  │     └─ config/                  // 전자정부 프레임워크용 설정 및 기타 설정 파일
-│  │  └─ resources/
-│  │     └─ mybatis/                   // MyBatis Mapper XML 파일들 (board-mapper.xml, attachedFile-mapper.xml 등)
-│  └─ webapp/
-│     ├─ WEB-INF/
-│     │  ├─ jsp/
-│     │  │  ├─ boardPage.jsp           // 게시글 목록 조회 및 검색, 페이징 처리 페이지
-│     │  │  ├─ boardFormPage.jsp       // 게시글 등록/수정 폼 페이지
-│     │  │  └─ boardDetail.jsp         // 게시글 상세보기 및 첨부파일, 답변글 표시 페이지
-│     │  └─ web.xml                     // 전자정부 프레임워크 및 서블릿 설정 파일
-│     └─ 기타 정적 리소스들 (CSS, JS 등)
-└─ build/ 또는 기타 빌드 관련 파일 (pom.xml, build.xml 등)
+eGov_first-main/ <br/>
+├─ src/ <br/>
+│  ├─ main/ <br/>
+│  │  ├─ java/ <br/>
+│  │  │  └─ homework/                   // 게시판 관련 핵심 코드 모음 <br/>
+│  │  │     ├─ controller/              // 요청 처리 컨트롤러 <br/>
+│  │  │     ├─ service/                 // 비즈니스 로직 처리 (게시판, 첨부파일, idgen 등), MyBatis를 통한 DB 연동 (매퍼 호출) <br/>
+│  │  │     ├─ dao/                     // MyBatis를 통한 DB 연동 (매퍼 호출) <br/>
+│  │  │     ├─ model/                   // 도메인 객체 (Board, AttachedFile 등) <br/>
+│  │  │     ├─ util/                    // 파일 업로드, 공통 기능 등 유틸 클래스 <br/>
+│  │  │     └─ config/                  // 전자정부 프레임워크용 설정 및 기타 설정 파일 <br/>
+│  │  └─ resources/ <br/>
+│  │     └─ mybatis/                   // MyBatis Mapper XML 파일들 (board-mapper.xml, attachedFile-mapper.xml 등) <br/>
+│  └─ webapp/ <br/>
+│     ├─ WEB-INF/ <br/>
+│     │  ├─ jsp/ <br/>
+│     │  │  ├─ boardPage.jsp           // 게시글 목록 조회 및 검색, 페이징 처리 페이지 <br/>
+│     │  │  ├─ boardFormPage.jsp       // 게시글 등록/수정 폼 페이지 <br/>
+│     │  │  └─ boardDetail.jsp         // 게시글 상세보기 및 첨부파일, 답변글 표시 페이지 <br/>
+│     │  └─ web.xml                     // 전자정부 프레임워크 및 서블릿 설정 파일 <br/>
+│     └─ 기타 정적 리소스들 (CSS, JS 등) <br/>
+└─ build/ 또는 기타 빌드 관련 파일 (pom.xml, build.xml 등) <br/>
 
 ## 🚀 설치 및 실행 방법
 
