@@ -65,7 +65,8 @@
             SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
             FROM attachedFile af
             WHERE af.board_idx = bt.idx
-          ) AS has_file -- 첨부파일 존재 여부
+          ) AS has_file, -- 첨부파일 존재 여부
+          COUNT(*) OVER() - ROW_NUMBER() OVER(ORDER BY bt.root_created_at DESC, bt.sort_path ASC) + 1 AS number -- 순번
         FROM board_tree bt
         ORDER BY
           root_created_at DESC, -- 원글은 최신 순으로
@@ -74,6 +75,7 @@
         OFFSET #{firstIndex} -- (pageIndex-1)*pageUnit
     ]]>
     </select>
+    <!-- 참고: 순번은 총행수 - 현재행번호 + 1 -->
 
     <!-- 검색된 게시글 목록 조회 -->
     <select id="selectSearchBoardList" parameterType="egovframework.practice.homework.service.BoardDefaultVO" resultType="egovframework.practice.homework.service.BoardVO">
@@ -88,7 +90,8 @@
                 SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
                 FROM attachedFile af
                 WHERE af.board_idx = b.idx
-            ) AS has_file
+            ) AS has_file,
+            COUNT(*) OVER() - ROW_NUMBER() OVER (ORDER BY created_at DESC) + 1 AS number
         FROM board b
         <where>
             <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">

@@ -70,7 +70,7 @@
     <button type="button" onclick="location.href='${newBoardFormUrl}';">글쓰기</button>
     <table border="1">
         <tr>
-            <th>Idx</th>
+            <th>순번</th>
             <th>제목</th>
             <th>작성자</th>
             <th>등록일</th>
@@ -79,7 +79,7 @@
         <!-- Model에 담긴 boardList 데이터를 JSTL forEach 태그를 통해 반복 출력 -->
         <c:forEach var="item" items="${boardList}">
             <tr>
-                <td>${item.idx}</td>
+                <td>${item.number}</td>
 
                 <!-- 원글일 경우 -->
                 <c:url var="detailUrl" value="/board/selectBoard.do">

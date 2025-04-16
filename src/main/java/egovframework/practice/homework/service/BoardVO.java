@@ -25,6 +25,8 @@ public class BoardVO {
 
     private int level; // 답글 레벨
 
+    private int number;
+
     private boolean hasFile; // 첨부파일 존재 여부
 
 }
