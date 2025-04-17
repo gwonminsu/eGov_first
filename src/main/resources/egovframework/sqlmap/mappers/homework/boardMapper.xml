@@ -120,8 +120,9 @@
         )
         -- 최종 선택 시
             SELECT
-                bt.idx, bt.parent_board_idx, bt.title, bt.author, bt.content,
-                bt.hit, bt.created_at, bt.updated_at, bt.level,
+                bt.idx, bt.parent_board_idx,
+                CASE WHEN bt.level <![CDATA[>]]> 0 THEN repeat(chr(160), bt.level * 4) || 'ㄴ' || bt.title ELSE bt.title END AS title, -- 계층형 표현
+                bt.author, bt.content, bt.hit, bt.created_at, bt.updated_at, bt.level,
                 (
                     SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
                     FROM attachedFile af
