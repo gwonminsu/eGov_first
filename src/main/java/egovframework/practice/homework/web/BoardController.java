@@ -179,7 +179,7 @@ public class BoardController {
         String originalFileName = fileVO.getFileName(); // 사용자에게 보여줄 원본 파일명
         String fullPath = fileVO.getFilePath() + File.separator + storedFileName;
 
-        // 3) 파일 읽어서 response로 스트리밍
+        // 파일 읽어서 response로 스트리밍
         File file = new File(fullPath);
         if (!file.exists()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

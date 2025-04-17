@@ -79,45 +79,106 @@
 
     <!-- 검색된 게시글 목록 조회 -->
     <select id="selectSearchBoardList" parameterType="egovframework.practice.homework.service.BoardDefaultVO" resultType="egovframework.practice.homework.service.BoardVO">
-        SELECT
-            b.idx, b.author,
-            b.parent_board_idx AS parentBoardIdx,
-            b.title, b.password, b.hit, b.content,
-            b.created_at AS createdAt,
-            b.updated_at AS updatedAt,
-            -- 첨부파일
-            (
-                SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
-                FROM attachedFile af
-                WHERE af.board_idx = b.idx
-            ) AS has_file,
-            COUNT(*) OVER() - ROW_NUMBER() OVER (ORDER BY created_at DESC) + 1 AS number
-        FROM board b
-        <where>
-            <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">
-                author LIKE CONCAT('%', #{keyword}, '%')
-            </if>
-            <if test="searchType == 'title' and keyword != null and keyword.trim() != ''">
-                title  LIKE CONCAT('%', #{keyword}, '%')
-            </if>
-        </where>
-        ORDER BY created_at DESC
-        LIMIT #{recordCountPerPage}  -- pageUnit (=10)
-        OFFSET #{firstIndex} -- (pageIndex-1)*pageUnit
+        WITH RECURSIVE board_tree AS (
+            -- 루트 게시글(원글) 조회
+            SELECT
+                idx, author, parent_board_idx, title, password,
+                hit, content, created_at, updated_at,
+                0 AS level,
+                idx::VARCHAR AS sort_path, -- 정렬용 경로: 초기값은 본인 idx(VACHAR(20)이므로 VARCHAR으로 형 변환 필요)
+                created_at AS root_created_at
+            FROM board
+            WHERE parent_board_idx IS NULL
+
+            UNION ALL
+
+            -- 답글: 부모의 level + 1
+            SELECT
+                b.idx, b.author, b.parent_board_idx, b.title, b.password,
+                b.hit, b.content, b.created_at, b.updated_at,
+                bt.level + 1 AS level,
+                bt.sort_path || '-' || b.idx AS sort_path, -- 부모 경로 뒤에 본인 idx 이어붙이기
+                bt.root_created_at
+            FROM board b
+            JOIN board_tree bt
+            ON b.parent_board_idx = bt.idx
+            WHERE bt.level <![CDATA[<]]> 2
+        ),
+
+        -- 검색 조건에 맞는 게시글들의 root_created_at만 뽑기
+        matched_roots AS (
+            SELECT DISTINCT root_created_at
+            FROM board_tree
+            <where>
+                <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">
+                    author LIKE CONCAT('%', #{keyword}, '%')
+                </if>
+                <if test="searchType == 'title' and keyword != null and keyword.trim() != ''">
+                    title  LIKE CONCAT('%', #{keyword}, '%')
+                </if>
+            </where>
+        )
+        -- 최종 선택 시
+            SELECT
+                bt.idx, bt.parent_board_idx, bt.title, bt.author, bt.content,
+                bt.hit, bt.created_at, bt.updated_at, bt.level,
+                (
+                    SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+                    FROM attachedFile af
+                    WHERE af.board_idx = bt.idx
+                ) AS has_file, -- 첨부파일 존재 여부
+                COUNT(*) OVER() - ROW_NUMBER() OVER(ORDER BY bt.root_created_at DESC, bt.sort_path ASC) + 1 AS number -- 순번
+            FROM board_tree bt
+            WHERE bt.root_created_at IN (SELECT root_created_at FROM matched_roots) -- matched_roots 에 존재하는 그룹을 가지고 있는 게시물들을 select
+            ORDER BY
+                root_created_at DESC, -- 원글은 최신 순으로
+                sort_path ASC -- 자식은 트리 경로 기반으로 사전 방식 정렬
+            LIMIT #{recordCountPerPage}  -- pageUnit (=10)
+            OFFSET #{firstIndex} -- (pageIndex-1)*pageUnit
     </select>
 
     <!-- 검색된 게시글 개수 조회 -->
     <select id="selectSearchBoardCount" parameterType="egovframework.practice.homework.service.BoardDefaultVO" resultType="int">
+        WITH RECURSIVE board_tree AS (
+            SELECT
+                idx, author, parent_board_idx, title, password,
+                hit, content, created_at, updated_at,
+                0 AS level,
+                idx::VARCHAR AS sort_path,
+                created_at AS root_created_at
+            FROM board
+            WHERE parent_board_idx IS NULL
+
+            UNION ALL
+
+            SELECT
+                b.idx, b.author, b.parent_board_idx, b.title, b.password,
+                b.hit, b.content, b.created_at, b.updated_at,
+                bt.level + 1 AS level,
+                bt.sort_path || '-' || b.idx AS sort_path,
+                bt.root_created_at
+            FROM board b
+            JOIN board_tree bt
+            ON b.parent_board_idx = bt.idx
+            WHERE bt.level <![CDATA[<]]> 2
+        ),
+
+        matched_roots AS (
+            SELECT DISTINCT root_created_at
+            FROM board_tree
+            <where>
+                <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">
+                    author LIKE CONCAT('%', #{keyword}, '%')
+                </if>
+                <if test="searchType == 'title' and keyword != null and keyword.trim() != ''">
+                    title  LIKE CONCAT('%', #{keyword}, '%')
+                </if>
+            </where>
+        )
+
         SELECT COUNT(*)
-        FROM board
-        <where>
-            <if test="searchType == 'author' and keyword != null and keyword.trim() != ''">
-                author LIKE CONCAT('%', #{keyword}, '%')
-            </if>
-            <if test="searchType == 'title' and keyword != null and keyword.trim() != ''">
-                title  LIKE CONCAT('%', #{keyword}, '%')
-            </if>
-        </where>
+        FROM board_tree bt
+        WHERE bt.root_created_at IN (SELECT root_created_at FROM matched_roots)
     </select>
 
     <!-- 게시글 등록 -->
