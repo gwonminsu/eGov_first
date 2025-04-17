@@ -90,7 +90,7 @@
 
     <!-- 검색 폼 -->
     <c:url var="searchUrl" value="/board/mainBoardList.do"/>
-    <form:form id="searchForm" modelAttribute="searchVO" method="get" action="${searchUrl}" style="margin-bottom:1em;">
+    <form:form id="searchForm" modelAttribute="searchVO" method="post" action="${searchUrl}" style="margin-bottom:1em;">
         <form:hidden path="pageIndex" id="pageIndex"/>
         <label for="searchType">검색조건:</label>
         <form:select path="searchType" id="searchType">
@@ -125,38 +125,26 @@
             <tr>
                 <td class="center">${item.number}</td>
 
-                <!-- 원글일 경우 -->
-                <c:url var="detailUrl" value="/board/selectBoard.do">
-                    <c:param name="idx" value="${item.idx}" />
-                    <!-- 검색 파라미터가 있으면 selectBoard.do에 검색 파라미터를 더해서 전달(목록버튼으로 다시 돌아가기 위함) -->
-                    <c:if test="${not empty param.searchType}">
-                        <c:param name="searchType" value="${param.searchType}" />
-                    </c:if>
-                    <c:if test="${not empty param.keyword}">
-                        <c:param name="keyword" value="${param.keyword}" />
-                    </c:if>
-                </c:url>
-
                 <td>
-                    <c:choose>
-                        <%-- 실제 검색어(param.keyword)가 있을 때만 검색 모드로 간주 --%>
-                        <c:when test="${not empty param.keyword}">
-                            <%-- 검색 모드(키워드가 있을 때)는 들여쓰기 없이 --%>
-                        </c:when>
-                        <c:otherwise>
-                            <%-- 검색어가 없거나 페이징 이동일 때는 항상 계층 들여쓰기 --%>
-                            <c:forEach var="i" begin="1" end="${item.level * 4}">
-                                &nbsp;
-                            </c:forEach>
-                            <c:if test="${item.level > 0}">ㄴ</c:if>
-                        </c:otherwise>
-                    </c:choose>
-                    <a href="${detailUrl}">
-                        <c:out value="${item.title}" />
-                    </a>
-                    <c:if test="${item.hasFile}">
-                        &nbsp;🔗
-                    </c:if>
+                    <form id="detailForm${item.idx}" method="post" action="/board/selectBoard.do" style="display:inline;">
+                        <input type="hidden" name="idx" value="${item.idx}"/>
+                        <input type="hidden" name="searchType" value="${param.searchType}"/>
+                        <input type="hidden" name="keyword" value="${param.keyword}"/>
+                            <c:choose>
+                                <c:when test="${not empty param.keyword}"></c:when>
+                                <c:otherwise>
+                                    <c:forEach var="i" begin="1" end="${item.level * 4}">
+                                        &nbsp;
+                                    </c:forEach>
+                                    <c:if test="${item.level > 0}">ㄴ</c:if>
+                                </c:otherwise>
+                            </c:choose>
+                            <a href="javascript:document.getElementById('detailForm${item.idx}').submit();"
+                               style="color:inherit; text-decoration:none; cursor:pointer;">
+                                <c:out value="${item.title}" />
+                            </a>
+                            <c:if test="${item.hasFile}"> &#128279;</c:if>
+                    </form>
                 </td>
 
                 <td class="center">${item.author}</td>

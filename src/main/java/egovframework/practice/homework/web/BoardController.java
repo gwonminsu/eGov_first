@@ -130,7 +130,7 @@ public class BoardController {
     }
 
     // 게시글 상세 조회
-    @RequestMapping(value="/selectBoard.do", method=RequestMethod.GET)
+    @RequestMapping(value="/selectBoard.do",  method={RequestMethod.GET, RequestMethod.POST})
     public String selectBoard(@RequestParam("idx") String idx, Model model) throws Exception {
         // 조회수 증가
         boardService.updateHitCount(idx);
